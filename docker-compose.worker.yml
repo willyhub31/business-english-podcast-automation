@@ -1,0 +1,15 @@
+services:
+  business-english-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: business-english-worker
+    restart: unless-stopped
+    env_file:
+      - ./automation/.env.worker
+    ports:
+      - "8777:8777"
+    volumes:
+      - ./runs:/app/runs
+      - ./automation:/app/automation
+      - ./secrets:/app/secrets

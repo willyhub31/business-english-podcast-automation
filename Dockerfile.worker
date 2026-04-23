@@ -1,0 +1,20 @@
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY automation/requirements-worker.txt /tmp/requirements-worker.txt
+RUN pip install -r /tmp/requirements-worker.txt
+
+COPY . /app
+
+EXPOSE 8777
+
+CMD ["python", "automation/local_worker_server.py"]

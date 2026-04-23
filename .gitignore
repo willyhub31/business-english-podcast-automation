@@ -1,0 +1,37 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+
+# Local automation runtime
+automation/.env.worker
+automation/worker_config.json
+automation/worker_runtime.json
+automation/worker_server.log
+automation/worker_server.err.log
+automation/ngrok.log
+automation/ngrok.err.log
+
+# Generated media
+runs/
+episode_sections/
+business_english_episode*.mp4
+business_english_episode*.mp3
+business_english_episode*.png
+business_english_episode*.srt
+business_english_episode*.ass
+business_english_episode*.txt
+business_english_episode*.concat.txt
+background_frame.png
+video_background_pingpong.mp4
+full_transcript.txt
+youtube_title.txt
+youtube_description.txt
+simple_subtitle_render_filter.txt
+business_english_episode.filter.txt
+video background.mp4
+
+# Secrets
+secrets/
+automation/vendor/*.pickle
+automation/vendor/client_secrets*.json

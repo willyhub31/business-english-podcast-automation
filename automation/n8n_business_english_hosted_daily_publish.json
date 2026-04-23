@@ -1,0 +1,151 @@
+{
+  "name": "Business English Hosted Daily Publish",
+  "nodes": [
+    {
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        260,
+        220
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        420
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 9 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "worker-request",
+      "name": "Run Daily Worker Publish",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        700,
+        320
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://shantae-unsnobbish-adella.ngrok-free.dev/run-job",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer business-english-worker-2026-04-23"
+            },
+            {
+              "name": "ngrok-skip-browser-warning",
+              "value": "true"
+            },
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "specifyBody": "keypair",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "queue_file",
+              "value": "F:/Workspaces/youtube/podcast english/automation/business_english_topics.txt"
+            },
+            {
+              "name": "state_file",
+              "value": "F:/Workspaces/youtube/podcast english/automation/automation_state.json"
+            },
+            {
+              "name": "log_file",
+              "value": "F:/Workspaces/youtube/podcast english/automation/automation_history.jsonl"
+            },
+            {
+              "name": "output_root",
+              "value": "F:/Workspaces/youtube/podcast english/runs"
+            },
+            {
+              "name": "background",
+              "value": "F:/Workspaces/youtube/podcast english/video background.mp4"
+            },
+            {
+              "name": "channel_title",
+              "value": "Business English Podcast"
+            },
+            {
+              "name": "female_voice",
+              "value": "Sadachbia"
+            },
+            {
+              "name": "male_voice",
+              "value": "Puck"
+            },
+            {
+              "name": "channel_profile",
+              "value": "channel2"
+            },
+            {
+              "name": "upload_mode",
+              "value": "private"
+            },
+            {
+              "name": "synthetic_media",
+              "value": "yes"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Daily Worker Publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Daily Worker Publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "Europe/Paris",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

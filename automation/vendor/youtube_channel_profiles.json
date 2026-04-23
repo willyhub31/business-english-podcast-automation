@@ -1,0 +1,22 @@
+{
+  "default_profile": "channel2",
+  "profiles": {
+    "channel1": {
+      "token_file": "youtube_token_pov_shadow_systems.pickle",
+      "client_secrets": "client_secrets.json",
+      "expected_channel_name": "Pov Shadow Systems",
+      "expected_channel_id": "UCZ7pdGiuePNSygTzp-_KV7g"
+    },
+    "channel2": {
+      "token_file": "youtube_token_channel2.pickle",
+      "client_secrets": "client_secrets_channel2.json",
+      "expected_channel_name": "ThePovpshit",
+      "expected_channel_id": "UC9kcGGG61KDJvFrnHcMviQw"
+    },
+    "billionaire_lifestyle_club": {
+      "token_file": "youtube_token_billionaire_lifestyle_club.pickle",
+      "client_secrets": "client_secrets.json",
+      "expected_channel_name": "Billionaire Lifestyle"
+    }
+  }
+}

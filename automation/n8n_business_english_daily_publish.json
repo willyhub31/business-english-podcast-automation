@@ -1,0 +1,84 @@
+{
+  "name": "Business English Daily Publish",
+  "nodes": [
+    {
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        260,
+        220
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        260,
+        420
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 9 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "run-daily-job",
+      "name": "Run Daily Podcast Job",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        620,
+        320
+      ],
+      "parameters": {
+        "command": "python \"F:\\Workspaces\\youtube\\podcast english\\automation\\run_daily_business_english_job.py\" --queue-file \"F:\\Workspaces\\youtube\\podcast english\\automation\\business_english_topics.txt\" --state-file \"F:\\Workspaces\\youtube\\podcast english\\automation\\automation_state.json\" --log-file \"F:\\Workspaces\\youtube\\podcast english\\automation\\automation_history.jsonl\" --output-root \"F:\\Workspaces\\youtube\\podcast english\\runs\" --background \"F:\\Workspaces\\youtube\\podcast english\\video background.mp4\" --channel-title \"Business English Podcast\" --female-voice Sadachbia --male-voice Puck --channel-profile channel2 --upload-mode private"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Daily Podcast Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Daily Podcast Job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "Europe/Paris",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

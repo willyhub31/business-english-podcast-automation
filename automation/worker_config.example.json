@@ -1,0 +1,5 @@
+{
+  "host": "127.0.0.1",
+  "port": 8777,
+  "auth_token": "replace-with-random-token"
+}

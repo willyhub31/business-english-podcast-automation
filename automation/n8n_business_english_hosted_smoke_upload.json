@@ -1,0 +1,104 @@
+{
+  "name": "Business English Hosted Smoke Upload",
+  "nodes": [
+    {
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        300,
+        320
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "worker-request",
+      "name": "Run Worker Smoke Upload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        700,
+        320
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://shantae-unsnobbish-adella.ngrok-free.dev/run-job",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer business-english-worker-2026-04-23"
+            },
+            {
+              "name": "ngrok-skip-browser-warning",
+              "value": "true"
+            },
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "specifyBody": "keypair",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "queue_file",
+              "value": "F:/Workspaces/youtube/podcast english/automation/business_english_topics.txt"
+            },
+            {
+              "name": "state_file",
+              "value": "F:/Workspaces/youtube/podcast english/automation/automation_state.json"
+            },
+            {
+              "name": "log_file",
+              "value": "F:/Workspaces/youtube/podcast english/automation/automation_history.jsonl"
+            },
+            {
+              "name": "reuse_build_from",
+              "value": "F:/Workspaces/youtube/podcast english"
+            },
+            {
+              "name": "channel_profile",
+              "value": "channel2"
+            },
+            {
+              "name": "upload_mode",
+              "value": "private"
+            },
+            {
+              "name": "synthetic_media",
+              "value": "yes"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Worker Smoke Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "Europe/Paris",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

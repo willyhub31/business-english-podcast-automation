@@ -1,0 +1,53 @@
+{
+  "name": "Business English Manual Smoke Test",
+  "nodes": [
+    {
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        260,
+        320
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "run-smoketest",
+      "name": "Run Smoke Test",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        620,
+        320
+      ],
+      "parameters": {
+        "command": "python \"F:\\Workspaces\\youtube\\podcast english\\automation\\run_daily_business_english_job.py\" --queue-file \"F:\\Workspaces\\youtube\\podcast english\\automation\\business_english_topics.txt\" --state-file \"F:\\Workspaces\\youtube\\podcast english\\automation\\automation_state.json\" --log-file \"F:\\Workspaces\\youtube\\podcast english\\automation\\automation_history.jsonl\" --reuse-build-from \"F:\\Workspaces\\youtube\\podcast english\" --channel-title \"Business English Podcast\" --channel-profile channel2 --upload-mode auth-check"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run Smoke Test",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "timezone": "Europe/Paris",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
