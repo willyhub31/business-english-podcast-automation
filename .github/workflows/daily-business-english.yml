@@ -9,6 +9,8 @@ on:
         default: "private"
         type: choice
         options:
+          - auth-check
+          - none
           - private
           - unlisted
           - public
@@ -104,6 +106,27 @@ jobs:
           import subprocess
           import sys
 
+          upload_mode = os.environ.get("INPUT_UPLOAD_MODE") or "private"
+          if os.environ.get("EVENT_NAME") == "schedule":
+              upload_mode = "private"
+
+          if upload_mode == "auth-check":
+              command = [
+                  sys.executable,
+                  "automation/vendor/upload_to_youtube.py",
+                  "--channel-profile",
+                  "channel2",
+                  "--channel-config",
+                  "automation/vendor/youtube_channel_profiles.json",
+                  "--token-file",
+                  "secrets/youtube_token_channel2.pickle",
+                  "--client-secrets",
+                  "secrets/client_secrets_channel2.json",
+                  "--auth-only",
+              ]
+              subprocess.run(command, check=True)
+              raise SystemExit(0)
+
           command = [
               sys.executable,
               "automation/run_daily_business_english_job.py",
@@ -126,9 +149,6 @@ jobs:
               "--synthetic-media",
               "yes",
           ]
-          upload_mode = os.environ.get("INPUT_UPLOAD_MODE") or "private"
-          if os.environ.get("EVENT_NAME") == "schedule":
-              upload_mode = "private"
           command.extend(["--upload-mode", upload_mode])
 
           topic = (os.environ.get("INPUT_TOPIC") or "").strip()

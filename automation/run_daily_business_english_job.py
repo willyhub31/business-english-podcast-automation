@@ -87,7 +87,10 @@ def run_command(command: list[str], env: dict[str, str] | None = None) -> str:
     process.wait()
     output = "".join(lines)
     if process.returncode != 0:
-        raise RuntimeError(f"Command failed ({process.returncode}): {' '.join(command)}")
+        tail = "\n".join(output.splitlines()[-80:])
+        raise RuntimeError(
+            f"Command failed ({process.returncode}): {' '.join(command)}\n\nLast output:\n{tail}"
+        )
     return output
 
 
