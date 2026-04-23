@@ -303,6 +303,9 @@ def main() -> int:
     build_script = Path(args.build_script)
     background = Path(args.background)
     upload_script = Path(args.upload_script)
+    channel_config = str(Path(args.channel_config).resolve()) if args.channel_config else None
+    token_file = str(Path(args.token_file).resolve()) if args.token_file else None
+    client_secrets = str(Path(args.client_secrets).resolve()) if args.client_secrets else None
     state = load_state(state_file)
     topic, topic_index = choose_topic(args.episode_topic, queue_file, state)
 
@@ -331,9 +334,9 @@ def main() -> int:
             run_upload(
                 upload_script=upload_script,
                 channel_profile=args.channel_profile,
-                channel_config=args.channel_config,
-                token_file=args.token_file,
-                client_secrets=args.client_secrets,
+                channel_config=channel_config,
+                token_file=token_file,
+                client_secrets=client_secrets,
                 upload_mode=args.upload_mode,
                 run_dir=run_dir,
                 verified=verified,

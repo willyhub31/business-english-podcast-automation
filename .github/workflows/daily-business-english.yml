@@ -105,6 +105,12 @@ jobs:
           import os
           import subprocess
           import sys
+          from pathlib import Path
+
+          workspace = Path.cwd()
+          channel_config = str((workspace / "automation/vendor/youtube_channel_profiles.json").resolve())
+          token_file = str((workspace / "secrets/youtube_token_channel2.pickle").resolve())
+          client_secrets = str((workspace / "secrets/client_secrets_channel2.json").resolve())
 
           upload_mode = os.environ.get("INPUT_UPLOAD_MODE") or "private"
           if os.environ.get("EVENT_NAME") == "schedule":
@@ -117,11 +123,11 @@ jobs:
                   "--channel-profile",
                   "channel2",
                   "--channel-config",
-                  "automation/vendor/youtube_channel_profiles.json",
+                  channel_config,
                   "--token-file",
-                  "secrets/youtube_token_channel2.pickle",
+                  token_file,
                   "--client-secrets",
-                  "secrets/client_secrets_channel2.json",
+                  client_secrets,
                   "--auth-only",
               ]
               subprocess.run(command, check=True)
@@ -141,11 +147,11 @@ jobs:
               "--channel-profile",
               "channel2",
               "--channel-config",
-              "automation/vendor/youtube_channel_profiles.json",
+              channel_config,
               "--token-file",
-              "secrets/youtube_token_channel2.pickle",
+              token_file,
               "--client-secrets",
-              "secrets/client_secrets_channel2.json",
+              client_secrets,
               "--synthetic-media",
               "yes",
           ]
