@@ -1,0 +1,697 @@
+{
+  "generated_at": "2026-04-24T21:16:36+00:00",
+  "channel_title": "The English Pod Club",
+  "own_channel": {
+    "channel_id": "UCkjtce-JgVBMwp8pNNKdPdA",
+    "title": "The English Pod Club",
+    "subscriber_count": 0,
+    "view_count": 0,
+    "video_count": 1,
+    "channel_url": "https://www.youtube.com/channel/UCkjtce-JgVBMwp8pNNKdPdA",
+    "recent_videos": [
+      {
+        "video_id": "6TyJPDdfmwM",
+        "title": "Business English Podcast | Sales Calls In English: Discovery To Close",
+        "published_at": "2026-04-24T21:12:49Z",
+        "views": 0,
+        "likes": 0,
+        "comments": 0,
+        "duration_seconds": 630,
+        "views_per_day": 0.0,
+        "url": "https://www.youtube.com/watch?v=6TyJPDdfmwM"
+      }
+    ],
+    "avg_views_recent": 0.0,
+    "avg_views_per_day_recent": 0.0,
+    "median_duration_recent_seconds": 630
+  },
+  "competitors": [
+    {
+      "channel_id": "UCyfuXve0-iSw1Pbd1HRbDAA",
+      "title": "Business English Learning",
+      "description": "Business English learning channel for those aspiring to be global leaders.  \n\nWelcome to Business English Learning !\nThis channel offers Business English materials.\nLet’s improve our English skills !\n\n #businessenglish #businesspodcast #english #englishforbusiness #businessenglishconversation \n",
+      "published_at": "2024-02-10T06:57:28.321789Z",
+      "subscriber_count": 136000,
+      "video_count": 233,
+      "view_count": 4645876,
+      "queries": [
+        "business english podcast",
+        "sales english"
+      ],
+      "niche_score": 5,
+      "focus_score": 3,
+      "recent_videos": [
+        {
+          "video_id": "BbPG__37U-k",
+          "title": "Everyday English Conversations for Smooth Daily Work and Life - Business English Learning [BEL196]",
+          "published_at": "2026-04-22T13:00:31Z",
+          "views": 903,
+          "likes": 17,
+          "comments": 2,
+          "duration_seconds": 5529,
+          "views_per_day": 385.16,
+          "url": "https://www.youtube.com/watch?v=BbPG__37U-k"
+        },
+        {
+          "video_id": "rdtOpc3mg6g",
+          "title": "Win Trust Fast Conversations for New Leaders in English-Speaking Workplaces [BEL195]",
+          "published_at": "2026-04-18T13:01:35Z",
+          "views": 1529,
+          "likes": 30,
+          "comments": 5,
+          "duration_seconds": 5887,
+          "views_per_day": 241.02,
+          "url": "https://www.youtube.com/watch?v=rdtOpc3mg6g"
+        },
+        {
+          "video_id": "iPiO6IEvQTg",
+          "title": "Smart Conversations for Busy Managers: Delegate, Follow Up with Professional English [BEL194]",
+          "published_at": "2026-04-15T13:01:22Z",
+          "views": 3730,
+          "likes": 91,
+          "comments": 1,
+          "duration_seconds": 4765,
+          "views_per_day": 399.19,
+          "url": "https://www.youtube.com/watch?v=iPiO6IEvQTg"
+        },
+        {
+          "video_id": "Mnltpm-hkZ8",
+          "title": "Essential Workplace Conversations to Speak Clearly and Confidently | Business English [BEL193]",
+          "published_at": "2026-04-11T13:00:43Z",
+          "views": 1986,
+          "likes": 49,
+          "comments": 0,
+          "duration_seconds": 4782,
+          "views_per_day": 148.83,
+          "url": "https://www.youtube.com/watch?v=Mnltpm-hkZ8"
+        },
+        {
+          "video_id": "vo1r8jX-tU4",
+          "title": "15 Professional Conversations for Business English - Business English Learning [BEL192]",
+          "published_at": "2026-04-08T13:01:53Z",
+          "views": 1467,
+          "likes": 22,
+          "comments": 2,
+          "duration_seconds": 6479,
+          "views_per_day": 89.76,
+          "url": "https://www.youtube.com/watch?v=vo1r8jX-tU4"
+        }
+      ],
+      "analysis_videos": [
+        {
+          "video_id": "BbPG__37U-k",
+          "title": "Everyday English Conversations for Smooth Daily Work and Life - Business English Learning [BEL196]",
+          "published_at": "2026-04-22T13:00:31Z",
+          "views": 903,
+          "likes": 17,
+          "comments": 2,
+          "duration_seconds": 5529,
+          "views_per_day": 385.16,
+          "url": "https://www.youtube.com/watch?v=BbPG__37U-k"
+        },
+        {
+          "video_id": "rdtOpc3mg6g",
+          "title": "Win Trust Fast Conversations for New Leaders in English-Speaking Workplaces [BEL195]",
+          "published_at": "2026-04-18T13:01:35Z",
+          "views": 1529,
+          "likes": 30,
+          "comments": 5,
+          "duration_seconds": 5887,
+          "views_per_day": 241.02,
+          "url": "https://www.youtube.com/watch?v=rdtOpc3mg6g"
+        },
+        {
+          "video_id": "iPiO6IEvQTg",
+          "title": "Smart Conversations for Busy Managers: Delegate, Follow Up with Professional English [BEL194]",
+          "published_at": "2026-04-15T13:01:22Z",
+          "views": 3730,
+          "likes": 91,
+          "comments": 1,
+          "duration_seconds": 4765,
+          "views_per_day": 399.19,
+          "url": "https://www.youtube.com/watch?v=iPiO6IEvQTg"
+        },
+        {
+          "video_id": "Mnltpm-hkZ8",
+          "title": "Essential Workplace Conversations to Speak Clearly and Confidently | Business English [BEL193]",
+          "published_at": "2026-04-11T13:00:43Z",
+          "views": 1986,
+          "likes": 49,
+          "comments": 0,
+          "duration_seconds": 4782,
+          "views_per_day": 148.83,
+          "url": "https://www.youtube.com/watch?v=Mnltpm-hkZ8"
+        },
+        {
+          "video_id": "vo1r8jX-tU4",
+          "title": "15 Professional Conversations for Business English - Business English Learning [BEL192]",
+          "published_at": "2026-04-08T13:01:53Z",
+          "views": 1467,
+          "likes": 22,
+          "comments": 2,
+          "duration_seconds": 6479,
+          "views_per_day": 89.76,
+          "url": "https://www.youtube.com/watch?v=vo1r8jX-tU4"
+        }
+      ],
+      "avg_views_per_day_recent": 252.79,
+      "median_duration_recent_seconds": 5529,
+      "channel_url": "https://www.youtube.com/channel/UCyfuXve0-iSw1Pbd1HRbDAA"
+    },
+    {
+      "channel_id": "UCP8WrPgYj8Zrg3vxrIxwARw",
+      "title": "BEP - Business English Podcast",
+      "description": "Business English Podcast: Your Path to Professional Fluency\n\nWelcome to the Business English Podcast channel, where we help you build confidence and communicate effectively in the global business world. \nOur episodes feature practical lessons, authentic dialogues, and expert tips—all designed to strengthen your English skills for workplace success. \nWhether you’re preparing for a job interview, leading a team meeting, or writing business emails, our concise, easy-to-follow lessons will guide you every step of the way.\n\nSubscribe and join our growing community of international professionals. \nEach new video is a step toward boosting your confidence and achieving your career goals. \nGet ready to take your English to the next level—and unlock countless opportunities along the way.\n\n#businesspodcast \n#podcast\n#englishpodcast\n#businessenglishpodcast\n#English\n#BusinessEnglish\n",
+      "published_at": "2025-01-13T13:02:11.144979Z",
+      "subscriber_count": 6760,
+      "video_count": 64,
+      "view_count": 80743,
+      "queries": [
+        "fixed",
+        "business english podcast"
+      ],
+      "niche_score": 8,
+      "focus_score": 5,
+      "recent_videos": [
+        {
+          "video_id": "rweT-slNpcE",
+          "title": "'This is Real English Conversation' REAL English Podcast - Business English Podcast",
+          "published_at": "2025-09-13T13:01:42Z",
+          "views": 11255,
+          "likes": 200,
+          "comments": 9,
+          "duration_seconds": 583,
+          "views_per_day": 50.39,
+          "url": "https://www.youtube.com/watch?v=rweT-slNpcE"
+        },
+        {
+          "video_id": "9e8OZjGOGq0",
+          "title": "\"Can you use Professional Phrases?\" REAL Business English Podcast about Professional Phrases 🎙️",
+          "published_at": "2025-09-12T14:00:12Z",
+          "views": 4907,
+          "likes": 79,
+          "comments": 4,
+          "duration_seconds": 1654,
+          "views_per_day": 21.88,
+          "url": "https://www.youtube.com/watch?v=9e8OZjGOGq0"
+        },
+        {
+          "video_id": "BjokHyB8cq8",
+          "title": "Transform Your English in Just 30 Days | Business English Podcast🎙️",
+          "published_at": "2025-04-11T12:00:25Z",
+          "views": 3249,
+          "likes": 72,
+          "comments": 6,
+          "duration_seconds": 1074,
+          "views_per_day": 8.59,
+          "url": "https://www.youtube.com/watch?v=BjokHyB8cq8"
+        },
+        {
+          "video_id": "4godN26PrAU",
+          "title": "Discover Practical English Tips for Real-Life Situations | Business English Podcast🎙️",
+          "published_at": "2025-04-09T12:00:13Z",
+          "views": 1291,
+          "likes": 21,
+          "comments": 2,
+          "duration_seconds": 1092,
+          "views_per_day": 3.39,
+          "url": "https://www.youtube.com/watch?v=4godN26PrAU"
+        },
+        {
+          "video_id": "m-kQLEU9f9E",
+          "title": "what english sounds like to foreigners | Business English Podcast🎙️",
+          "published_at": "2025-04-07T12:01:11Z",
+          "views": 830,
+          "likes": 14,
+          "comments": 3,
+          "duration_seconds": 1139,
+          "views_per_day": 2.17,
+          "url": "https://www.youtube.com/watch?v=m-kQLEU9f9E"
+        }
+      ],
+      "analysis_videos": [
+        {
+          "video_id": "9e8OZjGOGq0",
+          "title": "\"Can you use Professional Phrases?\" REAL Business English Podcast about Professional Phrases 🎙️",
+          "published_at": "2025-09-12T14:00:12Z",
+          "views": 4907,
+          "likes": 79,
+          "comments": 4,
+          "duration_seconds": 1654,
+          "views_per_day": 21.88,
+          "url": "https://www.youtube.com/watch?v=9e8OZjGOGq0"
+        }
+      ],
+      "avg_views_per_day_recent": 21.88,
+      "median_duration_recent_seconds": 1654,
+      "channel_url": "https://www.youtube.com/channel/UCP8WrPgYj8Zrg3vxrIxwARw"
+    },
+    {
+      "channel_id": "UCCDZhN_wQIkfQ3zhvu9vn9w",
+      "title": "The Business English Podcast",
+      "description": "🎧 Welcome to the home of The Business English Podcast!\n\n📺 Here you can find all our episodes with visual assistance and live transcripts so you never miss a phrase.\n\n📥 Be sure to subscribe so you can take advantage of every single episode. \n\n😎 Thanks for tuning in! \n\nP.S.  You can find Episodes 1-80 on our other channel: @BusinessEnglishforPros\n",
+      "published_at": "2024-05-08T08:09:17.782651Z",
+      "subscriber_count": 2620,
+      "video_count": 65,
+      "view_count": 38161,
+      "queries": [
+        "fixed",
+        "business english podcast"
+      ],
+      "niche_score": 3,
+      "focus_score": 1,
+      "recent_videos": [
+        {
+          "video_id": "UZlNRhQRsIA",
+          "title": "Polite Ways To Say NO Without Burning Bridges • BEP 143",
+          "published_at": "2025-09-16T23:00:28Z",
+          "views": 493,
+          "likes": 16,
+          "comments": 0,
+          "duration_seconds": 978,
+          "views_per_day": 2.24,
+          "url": "https://www.youtube.com/watch?v=UZlNRhQRsIA"
+        },
+        {
+          "video_id": "aBB4eQMc0RA",
+          "title": "Alternatives to  I Think  for Confident Communication • BEP 142",
+          "published_at": "2025-08-27T23:00:00Z",
+          "views": 233,
+          "likes": 10,
+          "comments": 1,
+          "duration_seconds": 910,
+          "views_per_day": 0.97,
+          "url": "https://www.youtube.com/watch?v=aBB4eQMc0RA"
+        },
+        {
+          "video_id": "5-z7fc4RnMQ",
+          "title": "Expressing Opinions Like a Native in Meetings • BEP 141",
+          "published_at": "2025-08-22T17:44:43Z",
+          "views": 273,
+          "likes": 11,
+          "comments": 1,
+          "duration_seconds": 705,
+          "views_per_day": 1.11,
+          "url": "https://www.youtube.com/watch?v=5-z7fc4RnMQ"
+        },
+        {
+          "video_id": "4_UHIx9T0U8",
+          "title": "3 Secrets to British Business English [with Charlie from The British English Podcast] • BEP 140",
+          "published_at": "2025-08-01T15:42:01Z",
+          "views": 383,
+          "likes": 16,
+          "comments": 1,
+          "duration_seconds": 1263,
+          "views_per_day": 1.44,
+          "url": "https://www.youtube.com/watch?v=4_UHIx9T0U8"
+        },
+        {
+          "video_id": "EIBYMZkXfyE",
+          "title": "Can We Still Disagree Without Offending Anyone? • BEP 139",
+          "published_at": "2025-07-23T10:55:01Z",
+          "views": 182,
+          "likes": 15,
+          "comments": 1,
+          "duration_seconds": 844,
+          "views_per_day": 0.66,
+          "url": "https://www.youtube.com/watch?v=EIBYMZkXfyE"
+        }
+      ],
+      "analysis_videos": [
+        {
+          "video_id": "aBB4eQMc0RA",
+          "title": "Alternatives to  I Think  for Confident Communication • BEP 142",
+          "published_at": "2025-08-27T23:00:00Z",
+          "views": 233,
+          "likes": 10,
+          "comments": 1,
+          "duration_seconds": 910,
+          "views_per_day": 0.97,
+          "url": "https://www.youtube.com/watch?v=aBB4eQMc0RA"
+        },
+        {
+          "video_id": "5-z7fc4RnMQ",
+          "title": "Expressing Opinions Like a Native in Meetings • BEP 141",
+          "published_at": "2025-08-22T17:44:43Z",
+          "views": 273,
+          "likes": 11,
+          "comments": 1,
+          "duration_seconds": 705,
+          "views_per_day": 1.11,
+          "url": "https://www.youtube.com/watch?v=5-z7fc4RnMQ"
+        }
+      ],
+      "avg_views_per_day_recent": 1.04,
+      "median_duration_recent_seconds": 807,
+      "channel_url": "https://www.youtube.com/channel/UCCDZhN_wQIkfQ3zhvu9vn9w"
+    },
+    {
+      "channel_id": "UCd0xZgPVR_CWWRNL2NLimIA",
+      "title": "Business English Club",
+      "description": "The Business English Club Channel provides videos on grammar, vocabulary and listening comprehension for Business English learners on an intermediate level and TOEIC exam test takers.  Our website offers online Business English Courses and one-on-one Business English courses.  Check us out today at  www.businessenglishclub.com.\n\nAlso, check out our podcast at this link:\nhttps://itunes.apple.com/us/podcast/the-business-english-club-podcast/id1228150837?mt=2",
+      "published_at": "2016-08-18T16:19:58Z",
+      "subscriber_count": 2190,
+      "video_count": 31,
+      "view_count": 89864,
+      "queries": [
+        "business english podcast"
+      ],
+      "niche_score": 5,
+      "focus_score": 2,
+      "recent_videos": [
+        {
+          "video_id": "bVBfL13HBtA",
+          "title": "The Business English Club Podcast- Six Expressions for Business- Learn English",
+          "published_at": "2018-01-12T21:06:44Z",
+          "views": 1077,
+          "likes": 15,
+          "comments": 0,
+          "duration_seconds": 728,
+          "views_per_day": 0.36,
+          "url": "https://www.youtube.com/watch?v=bVBfL13HBtA"
+        },
+        {
+          "video_id": "lo6_Fa8VQ1c",
+          "title": "Business English Club Podcast - Learn English for Project Management",
+          "published_at": "2017-12-18T01:16:01Z",
+          "views": 1376,
+          "likes": 16,
+          "comments": 0,
+          "duration_seconds": 504,
+          "views_per_day": 0.45,
+          "url": "https://www.youtube.com/watch?v=lo6_Fa8VQ1c"
+        },
+        {
+          "video_id": "MMDhVGXtbWU",
+          "title": "Great Action Verbs for Interviews and Resumes",
+          "published_at": "2017-12-04T11:08:50Z",
+          "views": 1003,
+          "likes": 15,
+          "comments": 0,
+          "duration_seconds": 454,
+          "views_per_day": 0.33,
+          "url": "https://www.youtube.com/watch?v=MMDhVGXtbWU"
+        },
+        {
+          "video_id": "R30Qx1oQ3ag",
+          "title": "Business English Club Podcast - How to Make a Great Impression - Learn English",
+          "published_at": "2017-11-24T20:58:55Z",
+          "views": 371,
+          "likes": 7,
+          "comments": 0,
+          "duration_seconds": 669,
+          "views_per_day": 0.12,
+          "url": "https://www.youtube.com/watch?v=R30Qx1oQ3ag"
+        },
+        {
+          "video_id": "DeqVv5nvors",
+          "title": "The Business English Club Podcast - Negotiation - Learn Business English",
+          "published_at": "2017-11-19T16:44:25Z",
+          "views": 797,
+          "likes": 9,
+          "comments": 0,
+          "duration_seconds": 606,
+          "views_per_day": 0.26,
+          "url": "https://www.youtube.com/watch?v=DeqVv5nvors"
+        }
+      ],
+      "analysis_videos": [
+        {
+          "video_id": "MMDhVGXtbWU",
+          "title": "Great Action Verbs for Interviews and Resumes",
+          "published_at": "2017-12-04T11:08:50Z",
+          "views": 1003,
+          "likes": 15,
+          "comments": 0,
+          "duration_seconds": 454,
+          "views_per_day": 0.33,
+          "url": "https://www.youtube.com/watch?v=MMDhVGXtbWU"
+        }
+      ],
+      "avg_views_per_day_recent": 0.33,
+      "median_duration_recent_seconds": 454,
+      "channel_url": "https://www.youtube.com/channel/UCd0xZgPVR_CWWRNL2NLimIA"
+    },
+    {
+      "channel_id": "UCbSpMDJ3X656Q3Sipoeqvmg",
+      "title": "Speak English With Class",
+      "description": "Learn English with English Leap Podcast – Our featured series of free, podcast-style videos that make learning English both fun and effective! Whether you're working on your listening, comprehension, or conversation skills, we've got you covered. Subscribe now for an enjoyable and efficient way to improve your English!\n\nWe offer:\nEngaging podcasts, stories, and real-life conversations designed to enhance your English learning.\nSuitable for learners at all levels, from beginner to advanced.\nCompletely free access to all of our content.\nRegularly updated episodes to keep your learning journey fresh and exciting.\nJoin Speak English With Class and take your listening and speaking skills to the next level!\n\n#englishpodcast #podcast #englishleappodcast #speakenglishwithclass #learnenglish #learn_english\n",
+      "published_at": "2024-06-06T18:06:43.277832Z",
+      "subscriber_count": 1220000,
+      "video_count": 215,
+      "view_count": 34901770,
+      "queries": [
+        "learn english podcast"
+      ],
+      "niche_score": 8,
+      "focus_score": 3,
+      "recent_videos": [
+        {
+          "video_id": "XmhkXNp6VPM",
+          "title": "Morning Routine to Stop Feeling Lazy | English Podcast for Easy English Listening Practice",
+          "published_at": "2026-04-24T13:55:22Z",
+          "views": 2339,
+          "likes": 178,
+          "comments": 19,
+          "duration_seconds": 1504,
+          "views_per_day": 7633.3,
+          "url": "https://www.youtube.com/watch?v=XmhkXNp6VPM"
+        },
+        {
+          "video_id": "Qtz_o8SeHpo",
+          "title": "English Podcast for Easy English Conversation | Talk About What Makes You Happy | Learn English Fast",
+          "published_at": "2026-04-22T13:00:47Z",
+          "views": 38453,
+          "likes": 1152,
+          "comments": 72,
+          "duration_seconds": 1637,
+          "views_per_day": 16402.59,
+          "url": "https://www.youtube.com/watch?v=Qtz_o8SeHpo"
+        },
+        {
+          "video_id": "2cK2P8Y63E8",
+          "title": "English Podcast for Easy English Conversation | Talking About Daily Life in English | B2 English",
+          "published_at": "2026-04-20T14:00:04Z",
+          "views": 57402,
+          "likes": 1370,
+          "comments": 102,
+          "duration_seconds": 1633,
+          "views_per_day": 13339.51,
+          "url": "https://www.youtube.com/watch?v=2cK2P8Y63E8"
+        },
+        {
+          "video_id": "wjMFlHUb894",
+          "title": "English Podcast For Easy English Conversation | Talking About Weather in English | Learn English",
+          "published_at": "2026-04-19T12:58:34Z",
+          "views": 87458,
+          "likes": 2107,
+          "comments": 96,
+          "duration_seconds": 1684,
+          "views_per_day": 16359.93,
+          "url": "https://www.youtube.com/watch?v=wjMFlHUb894"
+        },
+        {
+          "video_id": "gJlutW5kTS0",
+          "title": "English Podcast for Easy English Conversation | Why Confidence Feels More Attractive | Learn English",
+          "published_at": "2026-04-15T14:12:42Z",
+          "views": 82216,
+          "likes": 1881,
+          "comments": 88,
+          "duration_seconds": 1584,
+          "views_per_day": 8845.77,
+          "url": "https://www.youtube.com/watch?v=gJlutW5kTS0"
+        }
+      ],
+      "analysis_videos": [
+        {
+          "video_id": "Qtz_o8SeHpo",
+          "title": "English Podcast for Easy English Conversation | Talk About What Makes You Happy | Learn English Fast",
+          "published_at": "2026-04-22T13:00:47Z",
+          "views": 38453,
+          "likes": 1152,
+          "comments": 72,
+          "duration_seconds": 1637,
+          "views_per_day": 16402.59,
+          "url": "https://www.youtube.com/watch?v=Qtz_o8SeHpo"
+        },
+        {
+          "video_id": "2cK2P8Y63E8",
+          "title": "English Podcast for Easy English Conversation | Talking About Daily Life in English | B2 English",
+          "published_at": "2026-04-20T14:00:04Z",
+          "views": 57402,
+          "likes": 1370,
+          "comments": 102,
+          "duration_seconds": 1633,
+          "views_per_day": 13339.51,
+          "url": "https://www.youtube.com/watch?v=2cK2P8Y63E8"
+        },
+        {
+          "video_id": "wjMFlHUb894",
+          "title": "English Podcast For Easy English Conversation | Talking About Weather in English | Learn English",
+          "published_at": "2026-04-19T12:58:34Z",
+          "views": 87458,
+          "likes": 2107,
+          "comments": 96,
+          "duration_seconds": 1684,
+          "views_per_day": 16359.93,
+          "url": "https://www.youtube.com/watch?v=wjMFlHUb894"
+        },
+        {
+          "video_id": "gJlutW5kTS0",
+          "title": "English Podcast for Easy English Conversation | Why Confidence Feels More Attractive | Learn English",
+          "published_at": "2026-04-15T14:12:42Z",
+          "views": 82216,
+          "likes": 1881,
+          "comments": 88,
+          "duration_seconds": 1584,
+          "views_per_day": 8845.77,
+          "url": "https://www.youtube.com/watch?v=gJlutW5kTS0"
+        }
+      ],
+      "avg_views_per_day_recent": 13736.95,
+      "median_duration_recent_seconds": 1635,
+      "channel_url": "https://www.youtube.com/channel/UCbSpMDJ3X656Q3Sipoeqvmg"
+    }
+  ],
+  "top_competitor_videos": [
+    {
+      "video_id": "Qtz_o8SeHpo",
+      "title": "English Podcast for Easy English Conversation | Talk About What Makes You Happy | Learn English Fast",
+      "published_at": "2026-04-22T13:00:47Z",
+      "views": 38453,
+      "likes": 1152,
+      "comments": 72,
+      "duration_seconds": 1637,
+      "views_per_day": 16402.59,
+      "url": "https://www.youtube.com/watch?v=Qtz_o8SeHpo"
+    },
+    {
+      "video_id": "wjMFlHUb894",
+      "title": "English Podcast For Easy English Conversation | Talking About Weather in English | Learn English",
+      "published_at": "2026-04-19T12:58:34Z",
+      "views": 87458,
+      "likes": 2107,
+      "comments": 96,
+      "duration_seconds": 1684,
+      "views_per_day": 16359.93,
+      "url": "https://www.youtube.com/watch?v=wjMFlHUb894"
+    },
+    {
+      "video_id": "2cK2P8Y63E8",
+      "title": "English Podcast for Easy English Conversation | Talking About Daily Life in English | B2 English",
+      "published_at": "2026-04-20T14:00:04Z",
+      "views": 57402,
+      "likes": 1370,
+      "comments": 102,
+      "duration_seconds": 1633,
+      "views_per_day": 13339.51,
+      "url": "https://www.youtube.com/watch?v=2cK2P8Y63E8"
+    },
+    {
+      "video_id": "gJlutW5kTS0",
+      "title": "English Podcast for Easy English Conversation | Why Confidence Feels More Attractive | Learn English",
+      "published_at": "2026-04-15T14:12:42Z",
+      "views": 82216,
+      "likes": 1881,
+      "comments": 88,
+      "duration_seconds": 1584,
+      "views_per_day": 8845.77,
+      "url": "https://www.youtube.com/watch?v=gJlutW5kTS0"
+    },
+    {
+      "video_id": "iPiO6IEvQTg",
+      "title": "Smart Conversations for Busy Managers: Delegate, Follow Up with Professional English [BEL194]",
+      "published_at": "2026-04-15T13:01:22Z",
+      "views": 3730,
+      "likes": 91,
+      "comments": 1,
+      "duration_seconds": 4765,
+      "views_per_day": 399.19,
+      "url": "https://www.youtube.com/watch?v=iPiO6IEvQTg"
+    },
+    {
+      "video_id": "BbPG__37U-k",
+      "title": "Everyday English Conversations for Smooth Daily Work and Life - Business English Learning [BEL196]",
+      "published_at": "2026-04-22T13:00:31Z",
+      "views": 903,
+      "likes": 17,
+      "comments": 2,
+      "duration_seconds": 5529,
+      "views_per_day": 385.16,
+      "url": "https://www.youtube.com/watch?v=BbPG__37U-k"
+    },
+    {
+      "video_id": "rdtOpc3mg6g",
+      "title": "Win Trust Fast Conversations for New Leaders in English-Speaking Workplaces [BEL195]",
+      "published_at": "2026-04-18T13:01:35Z",
+      "views": 1529,
+      "likes": 30,
+      "comments": 5,
+      "duration_seconds": 5887,
+      "views_per_day": 241.02,
+      "url": "https://www.youtube.com/watch?v=rdtOpc3mg6g"
+    },
+    {
+      "video_id": "Mnltpm-hkZ8",
+      "title": "Essential Workplace Conversations to Speak Clearly and Confidently | Business English [BEL193]",
+      "published_at": "2026-04-11T13:00:43Z",
+      "views": 1986,
+      "likes": 49,
+      "comments": 0,
+      "duration_seconds": 4782,
+      "views_per_day": 148.83,
+      "url": "https://www.youtube.com/watch?v=Mnltpm-hkZ8"
+    },
+    {
+      "video_id": "vo1r8jX-tU4",
+      "title": "15 Professional Conversations for Business English - Business English Learning [BEL192]",
+      "published_at": "2026-04-08T13:01:53Z",
+      "views": 1467,
+      "likes": 22,
+      "comments": 2,
+      "duration_seconds": 6479,
+      "views_per_day": 89.76,
+      "url": "https://www.youtube.com/watch?v=vo1r8jX-tU4"
+    },
+    {
+      "video_id": "9e8OZjGOGq0",
+      "title": "\"Can you use Professional Phrases?\" REAL Business English Podcast about Professional Phrases 🎙️",
+      "published_at": "2025-09-12T14:00:12Z",
+      "views": 4907,
+      "likes": 79,
+      "comments": 4,
+      "duration_seconds": 1654,
+      "views_per_day": 21.88,
+      "url": "https://www.youtube.com/watch?v=9e8OZjGOGq0"
+    }
+  ],
+  "underperforming_own_videos": [],
+  "title_phrase_candidates": [
+    "easy conversation",
+    "conversation talking",
+    "talking about",
+    "professional phrases",
+    "conversation talk",
+    "talk about",
+    "about what",
+    "what makes"
+  ],
+  "missing_title_tokens": [
+    "about",
+    "action",
+    "alternatives",
+    "attractive",
+    "bep",
+    "busy",
+    "can",
+    "clearly",
+    "communication",
+    "confidence"
+  ],
+  "suggestions": [
+    "Test title angles using these high-frequency competitor hooks: easy conversation, conversation talking, talking about, professional phrases, conversation talk.",
+    "You are not using several niche tokens competitors lean on: about, action, alternatives, attractive, bep, busy.",
+    "Competitor lessons are usually longer (27:34) than your recent median (10:30). Test longer breakdown sections.",
+    "Your best recent video is at 0 views/day while the top competitor hit 16403 views/day. Improve the first 15 seconds and thumbnail contrast."
+  ]
+}

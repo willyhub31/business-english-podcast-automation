@@ -1,0 +1,30 @@
+{
+  "own_channel_id": "UCkjtce-JgVBMwp8pNNKdPdA",
+  "search_queries": [
+    "business english podcast",
+    "english conversation practice",
+    "english for work",
+    "sales english",
+    "learn english podcast"
+  ],
+  "fixed_competitors": [
+    {
+      "channel_id": "UCIiFsAO2Gh_vu8OStpjl16A",
+      "label": "Business English Pod"
+    },
+    {
+      "channel_id": "UCCDZhN_wQIkfQ3zhvu9vn9w",
+      "label": "The Business English Podcast"
+    },
+    {
+      "channel_id": "UCP8WrPgYj8Zrg3vxrIxwARw",
+      "label": "BEP - Business English Podcast"
+    }
+  ],
+  "channel_search_per_query": 5,
+  "max_competitors": 10,
+  "recent_videos_per_channel": 5,
+  "own_recent_videos": 10,
+  "min_niche_score": 3,
+  "min_competitor_video_seconds": 180
+}

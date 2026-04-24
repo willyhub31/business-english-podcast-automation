@@ -13,6 +13,17 @@ This project can publish one Business English episode per day from GitHub Action
 
 Workflow file:
 - [daily-business-english.yml](</F:/Workspaces/youtube/podcast english/.github/workflows/daily-business-english.yml>)
+- [daily-channel-improvement.yml](</F:/Workspaces/youtube/podcast english/.github/workflows/daily-channel-improvement.yml>)
+
+**Daily Improvement Workflow**
+
+- runs a second scheduled GitHub Action focused on growth, not publishing
+- scans your own latest uploads and basic channel stats
+- discovers and monitors Business English competitors from [channel_improvement_config.json](</F:/Workspaces/youtube/podcast english/automation/channel_improvement_config.json>)
+- writes:
+  - [latest_report.md](</F:/Workspaces/youtube/podcast english/reports/channel-improvement/latest_report.md>)
+  - [latest_report.json](</F:/Workspaces/youtube/podcast english/reports/channel-improvement/latest_report.json>)
+- uploads the report as an artifact and commits report history back to the repo
 
 **Required GitHub Secrets**
 
@@ -40,6 +51,7 @@ Windows PowerShell:
 The workflow runs daily at:
 
 - `07:17 UTC`
+- `05:47 UTC` for the improvement report
 
 That is roughly:
 

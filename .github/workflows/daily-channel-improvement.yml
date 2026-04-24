@@ -1,0 +1,98 @@
+name: Daily Channel Improvement
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "47 5 * * *"
+
+concurrency:
+  group: daily-channel-improvement
+  cancel-in-progress: false
+
+jobs:
+  analyze-channel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      BUSINESS_ENGLISH_BASE_DIR: ${{ github.workspace }}
+      BUSINESS_ENGLISH_CHANNEL_TITLE: The English Pod Club
+      YOUTUBE_CHANNEL_CONFIG: ${{ github.workspace }}/automation/vendor/youtube_channel_profiles.json
+      YOUTUBE_TOKEN_FILE: ${{ github.workspace }}/secrets/youtube_token_the_english_pod_club.pickle
+      YOUTUBE_CLIENT_SECRETS: ${{ github.workspace }}/secrets/client_secrets_channel2.json
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r automation/requirements-worker.txt
+
+      - name: Restore YouTube credential files
+        shell: python
+        env:
+          YOUTUBE_TOKEN_PICKLE_B64: ${{ secrets.YOUTUBE_TOKEN_PICKLE_B64 }}
+          YOUTUBE_CLIENT_SECRETS_JSON_B64: ${{ secrets.YOUTUBE_CLIENT_SECRETS_JSON_B64 }}
+        run: |
+          import base64
+          import os
+          from pathlib import Path
+
+          secrets_dir = Path("secrets")
+          secrets_dir.mkdir(parents=True, exist_ok=True)
+          files = {
+              "youtube_token_the_english_pod_club.pickle": os.environ["YOUTUBE_TOKEN_PICKLE_B64"],
+              "client_secrets_channel2.json": os.environ["YOUTUBE_CLIENT_SECRETS_JSON_B64"],
+          }
+          for name, payload in files.items():
+              (secrets_dir / name).write_bytes(base64.b64decode(payload))
+
+      - name: Generate daily improvement report
+        run: |
+          python automation/generate_daily_channel_improvement_report.py \
+            --token-file "${YOUTUBE_TOKEN_FILE}" \
+            --client-secrets "${YOUTUBE_CLIENT_SECRETS}" \
+            --config automation/channel_improvement_config.json \
+            --output-root reports/channel-improvement \
+            --channel-title "${BUSINESS_ENGLISH_CHANNEL_TITLE}"
+
+      - name: Publish report to GitHub summary
+        shell: bash
+        run: |
+          if [ -f reports/channel-improvement/latest_report.md ]; then
+            cat reports/channel-improvement/latest_report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload report artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: channel-improvement-${{ github.run_number }}
+          if-no-files-found: warn
+          path: |
+            reports/channel-improvement/**
+
+      - name: Persist latest reports
+        if: success()
+        shell: bash
+        run: |
+          if [ -z "$(git status --porcelain -- reports/channel-improvement)" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/channel-improvement
+          git commit -m "chore: update daily channel improvement report"
+          git push
