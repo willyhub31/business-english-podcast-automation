@@ -38,7 +38,7 @@ DEFAULT_QUEUE_FILE = AUTOMATION_DIR / "business_english_topics.txt"
 DEFAULT_STATE_FILE = AUTOMATION_DIR / "automation_state.json"
 DEFAULT_LOG_FILE = AUTOMATION_DIR / "automation_history.jsonl"
 DEFAULT_UPLOAD_SCRIPT = default_upload_script()
-DEFAULT_CHANNEL_TITLE = os.environ.get("BUSINESS_ENGLISH_CHANNEL_TITLE", "Business English Podcast")
+DEFAULT_CHANNEL_TITLE = os.environ.get("BUSINESS_ENGLISH_CHANNEL_TITLE", "The English Pod Club")
 DEFAULT_FEMALE_VOICE = os.environ.get("BUSINESS_ENGLISH_FEMALE_VOICE", "Sadachbia")
 DEFAULT_MALE_VOICE = os.environ.get("BUSINESS_ENGLISH_MALE_VOICE", "Puck")
 DEFAULT_CHANNEL_PROFILE = os.environ.get("BUSINESS_ENGLISH_CHANNEL_PROFILE", "channel2")
@@ -278,14 +278,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--upload-mode",
         default="none",
-        choices=["none", "auth-check", "private", "unlisted", "public"],
-        help="none = build only, auth-check = verify YouTube auth, others upload with that privacy.",
+        choices=["none", "auth-check", "private"],
+        help="none = build only, auth-check = verify YouTube auth, private = upload privately.",
     )
     parser.add_argument(
         "--synthetic-media",
         default="yes",
-        choices=["yes", "no"],
-        help="Pass altered-content disclosure flag to the upload script.",
+        choices=["yes"],
+        help="Always pass altered-content disclosure to the upload script.",
     )
     parser.add_argument(
         "--reuse-build-from",
@@ -329,7 +329,11 @@ def main() -> int:
         print_block("VERIFYING OUTPUTS")
         verified = verify_outputs(run_dir)
 
-        if args.upload_mode != "none":
+        upload_mode = args.upload_mode
+        if upload_mode not in {"none", "auth-check"}:
+            upload_mode = "private"
+
+        if upload_mode != "none":
             print_block(f"UPLOAD MODE: {args.upload_mode}")
             run_upload(
                 upload_script=upload_script,
@@ -337,10 +341,10 @@ def main() -> int:
                 channel_config=channel_config,
                 token_file=token_file,
                 client_secrets=client_secrets,
-                upload_mode=args.upload_mode,
+                upload_mode=upload_mode,
                 run_dir=run_dir,
                 verified=verified,
-                synthetic_media=args.synthetic_media,
+                synthetic_media="yes",
             )
 
         now = datetime.now().isoformat(timespec="seconds")
@@ -348,7 +352,7 @@ def main() -> int:
         state["last_topic"] = topic
         state["last_run_dir"] = str(run_dir)
         state["last_video_path"] = verified["video"]
-        state["last_upload_mode"] = args.upload_mode
+        state["last_upload_mode"] = upload_mode
         if topic_index is not None:
             state["next_topic_index"] = topic_index + 1
         save_state(state_file, state)
@@ -359,7 +363,7 @@ def main() -> int:
             "topic": topic,
             "runDir": str(run_dir),
             "verifiedFiles": verified,
-            "uploadMode": args.upload_mode,
+            "uploadMode": upload_mode,
             "channelProfile": args.channel_profile,
         }
         append_history(log_file, result)
@@ -373,7 +377,7 @@ def main() -> int:
             "ranAt": now,
             "topic": topic,
             "runDir": str(run_dir) if run_dir else None,
-            "uploadMode": args.upload_mode,
+            "uploadMode": upload_mode if "upload_mode" in locals() else args.upload_mode,
             "channelProfile": args.channel_profile,
             "error": str(exc),
         }

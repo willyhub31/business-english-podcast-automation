@@ -348,8 +348,8 @@ def main():
     parser.add_argument('--category', default='27', help='Category ID (default: 27 = Education)')
     parser.add_argument('--privacy', default='private', choices=['public', 'private', 'unlisted'],
                         help='Privacy status (default: private)')
-    parser.add_argument('--synthetic-media', choices=['yes', 'no'],
-                        help='Set altered content disclosure to yes or no')
+    parser.add_argument('--synthetic-media', default='yes', choices=['yes', 'no'],
+                        help='Set altered content disclosure to yes or no (default: yes)')
     parser.add_argument('--thumbnail', help='Thumbnail image file')
     parser.add_argument('--metadata-file', help='Load metadata from YAML/JSON file')
     parser.add_argument('--token-file',
@@ -417,8 +417,6 @@ def main():
     contains_synthetic_media = parse_yes_no(
         args.synthetic_media if args.synthetic_media is not None else metadata.get('containsSyntheticMedia')
     )
-    if contains_synthetic_media is None and args.privacy == 'private':
-        contains_synthetic_media = True
 
     if not args.auth_only and not title:
         print("ERROR: Title is required (use --title or --metadata-file)")
