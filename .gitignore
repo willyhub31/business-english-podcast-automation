@@ -2,6 +2,7 @@
 .venv/
 __pycache__/
 *.pyc
+.playwright-cli/
 
 # Local automation runtime
 automation/.env.worker
@@ -15,6 +16,7 @@ automation/ngrok.err.log
 # Generated media
 runs/
 episode_sections/
+branding/source_frames/
 business_english_episode*.mp4
 business_english_episode*.mp3
 business_english_episode*.png
