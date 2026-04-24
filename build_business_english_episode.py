@@ -21,7 +21,7 @@ DEFAULT_MALE_VOICE = "Puck"
 EXTRA_FEMALE_VOICE = "Sulafat"
 EXTRA_MALE_VOICE = "Charon"
 DEFAULT_EPISODE_TOPIC = "Sales Calls In English: Discovery To Close"
-DEFAULT_CHANNEL_TITLE = "Business English Podcast"
+DEFAULT_CHANNEL_TITLE = "The English Pod Club"
 
 
 @dataclass

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       upload_mode:
-        description: "YouTube privacy"
+        description: "Run mode"
         required: true
         default: "private"
         type: choice
@@ -12,8 +12,6 @@ on:
           - auth-check
           - none
           - private
-          - unlisted
-          - public
       episode_topic:
         description: "Optional explicit topic override"
         required: false
@@ -115,6 +113,8 @@ jobs:
 
           upload_mode = os.environ.get("INPUT_UPLOAD_MODE") or "private"
           if os.environ.get("EVENT_NAME") == "schedule":
+              upload_mode = "private"
+          elif upload_mode not in {"auth-check", "none"}:
               upload_mode = "private"
 
           if upload_mode == "auth-check":
