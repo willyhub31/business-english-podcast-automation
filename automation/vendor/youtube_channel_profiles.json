@@ -1,5 +1,5 @@
 {
-  "default_profile": "channel2",
+  "default_profile": "the_english_pod_club",
   "profiles": {
     "channel1": {
       "token_file": "youtube_token_pov_shadow_systems.pickle",
@@ -17,6 +17,12 @@
       "token_file": "youtube_token_billionaire_lifestyle_club.pickle",
       "client_secrets": "client_secrets.json",
       "expected_channel_name": "Billionaire Lifestyle"
+    },
+    "the_english_pod_club": {
+      "token_file": "youtube_token_the_english_pod_club.pickle",
+      "client_secrets": "client_secrets_channel2.json",
+      "expected_channel_name": "The English Pod Club",
+      "expected_channel_id": "UCkjtce-JgVBMwp8pNNKdPdA"
     }
   }
 }

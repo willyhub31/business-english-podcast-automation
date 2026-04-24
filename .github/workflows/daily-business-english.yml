@@ -38,12 +38,12 @@ jobs:
       BUSINESS_ENGLISH_BUILD_SCRIPT: ${{ github.workspace }}/build_business_english_episode.py
       BUSINESS_ENGLISH_BACKGROUND: ${{ github.workspace }}/generated_background.mp4
       BUSINESS_ENGLISH_UPLOAD_SCRIPT: ${{ github.workspace }}/automation/vendor/upload_to_youtube.py
-      BUSINESS_ENGLISH_CHANNEL_TITLE: Business English Podcast
+      BUSINESS_ENGLISH_CHANNEL_TITLE: The English Pod Club
       BUSINESS_ENGLISH_FEMALE_VOICE: Sadachbia
       BUSINESS_ENGLISH_MALE_VOICE: Puck
-      BUSINESS_ENGLISH_CHANNEL_PROFILE: channel2
+      BUSINESS_ENGLISH_CHANNEL_PROFILE: the_english_pod_club
       YOUTUBE_CHANNEL_CONFIG: ${{ github.workspace }}/automation/vendor/youtube_channel_profiles.json
-      YOUTUBE_TOKEN_FILE: ${{ github.workspace }}/secrets/youtube_token_channel2.pickle
+      YOUTUBE_TOKEN_FILE: ${{ github.workspace }}/secrets/youtube_token_the_english_pod_club.pickle
       YOUTUBE_CLIENT_SECRETS: ${{ github.workspace }}/secrets/client_secrets_channel2.json
       PYTHONUNBUFFERED: "1"
     steps:
@@ -90,6 +90,7 @@ jobs:
           secrets_dir.mkdir(parents=True, exist_ok=True)
           files = {
               "youtube_token_channel2.pickle": os.environ["YOUTUBE_TOKEN_PICKLE_B64"],
+              "youtube_token_the_english_pod_club.pickle": os.environ["YOUTUBE_TOKEN_PICKLE_B64"],
               "client_secrets_channel2.json": os.environ["YOUTUBE_CLIENT_SECRETS_JSON_B64"],
           }
           for name, payload in files.items():
@@ -121,11 +122,11 @@ jobs:
                   sys.executable,
                   "automation/vendor/upload_to_youtube.py",
                   "--channel-profile",
-                  "channel2",
+                  "the_english_pod_club",
                   "--channel-config",
                   channel_config,
                   "--token-file",
-                  token_file,
+                  str((workspace / "secrets/youtube_token_the_english_pod_club.pickle").resolve()),
                   "--client-secrets",
                   client_secrets,
                   "--auth-only",
@@ -145,11 +146,11 @@ jobs:
               "--output-root",
               "runs",
               "--channel-profile",
-              "channel2",
+              "the_english_pod_club",
               "--channel-config",
               channel_config,
               "--token-file",
-              token_file,
+              str((workspace / "secrets/youtube_token_the_english_pod_club.pickle").resolve()),
               "--client-secrets",
               client_secrets,
               "--synthetic-media",
