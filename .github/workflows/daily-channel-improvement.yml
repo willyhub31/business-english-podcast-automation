@@ -21,6 +21,7 @@ jobs:
       YOUTUBE_CHANNEL_CONFIG: ${{ github.workspace }}/automation/vendor/youtube_channel_profiles.json
       YOUTUBE_TOKEN_FILE: ${{ github.workspace }}/secrets/youtube_token_the_english_pod_club.pickle
       YOUTUBE_CLIENT_SECRETS: ${{ github.workspace }}/secrets/client_secrets_channel2.json
+      YOUTUBE_ANALYTICS_TOKEN_FILE: ${{ github.workspace }}/secrets/youtube_analytics_token_the_english_pod_club.pickle
       PYTHONUNBUFFERED: "1"
     steps:
       - name: Check out repository
@@ -45,6 +46,7 @@ jobs:
         env:
           YOUTUBE_TOKEN_PICKLE_B64: ${{ secrets.YOUTUBE_TOKEN_PICKLE_B64 }}
           YOUTUBE_CLIENT_SECRETS_JSON_B64: ${{ secrets.YOUTUBE_CLIENT_SECRETS_JSON_B64 }}
+          YOUTUBE_ANALYTICS_TOKEN_PICKLE_B64: ${{ secrets.YOUTUBE_ANALYTICS_TOKEN_PICKLE_B64 }}
         run: |
           import base64
           import os
@@ -56,17 +58,28 @@ jobs:
               "youtube_token_the_english_pod_club.pickle": os.environ["YOUTUBE_TOKEN_PICKLE_B64"],
               "client_secrets_channel2.json": os.environ["YOUTUBE_CLIENT_SECRETS_JSON_B64"],
           }
+          analytics_payload = os.environ.get("YOUTUBE_ANALYTICS_TOKEN_PICKLE_B64", "").strip()
+          if analytics_payload:
+              files["youtube_analytics_token_the_english_pod_club.pickle"] = analytics_payload
           for name, payload in files.items():
               (secrets_dir / name).write_bytes(base64.b64decode(payload))
 
       - name: Generate daily improvement report
+        shell: bash
         run: |
-          python automation/generate_daily_channel_improvement_report.py \
-            --token-file "${YOUTUBE_TOKEN_FILE}" \
-            --client-secrets "${YOUTUBE_CLIENT_SECRETS}" \
-            --config automation/channel_improvement_config.json \
-            --output-root reports/channel-improvement \
+          cmd=(
+            python automation/generate_daily_channel_improvement_report.py
+            --token-file "${YOUTUBE_TOKEN_FILE}"
+            --client-secrets "${YOUTUBE_CLIENT_SECRETS}"
+            --config automation/channel_improvement_config.json
+            --output-root reports/channel-improvement
             --channel-title "${BUSINESS_ENGLISH_CHANNEL_TITLE}"
+          )
+          if [ -f "${YOUTUBE_ANALYTICS_TOKEN_FILE}" ]; then
+            cmd+=(--analytics-token-file "${YOUTUBE_ANALYTICS_TOKEN_FILE}")
+            cmd+=(--analytics-client-secrets "${YOUTUBE_CLIENT_SECRETS}")
+          fi
+          "${cmd[@]}"
 
       - name: Publish report to GitHub summary
         shell: bash

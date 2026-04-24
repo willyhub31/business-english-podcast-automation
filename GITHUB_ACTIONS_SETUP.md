@@ -19,6 +19,7 @@ Workflow file:
 
 - runs a second scheduled GitHub Action focused on growth, not publishing
 - scans your own latest uploads and basic channel stats
+- uses YouTube Analytics when `YOUTUBE_ANALYTICS_TOKEN_PICKLE_B64` is present
 - discovers and monitors Business English competitors from [channel_improvement_config.json](</F:/Workspaces/youtube/podcast english/automation/channel_improvement_config.json>)
 - writes:
   - [latest_report.md](</F:/Workspaces/youtube/podcast english/reports/channel-improvement/latest_report.md>)
@@ -29,6 +30,7 @@ Workflow file:
 
 - `GEMINI_API_KEY`
 - `YOUTUBE_TOKEN_PICKLE_B64`
+- `YOUTUBE_ANALYTICS_TOKEN_PICKLE_B64`
 - `YOUTUBE_CLIENT_SECRETS_JSON_B64`
 
 Encode the local files to base64 before adding them as secrets:
@@ -37,6 +39,7 @@ Windows PowerShell:
 
 ```powershell
 [Convert]::ToBase64String([IO.File]::ReadAllBytes("F:\Workspaces\youtube\POV Shadow Systems\claude sonnet\tools\youtube_token_channel2.pickle"))
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("F:\Workspaces\youtube\podcast english\automation\vendor\youtube_analytics_token_the_english_pod_club.pickle"))
 [Convert]::ToBase64String([IO.File]::ReadAllBytes("F:\Workspaces\youtube\POV Shadow Systems\claude sonnet\tools\client_secrets_channel2.json"))
 ```
 

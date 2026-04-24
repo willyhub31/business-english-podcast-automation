@@ -2,15 +2,16 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import re
 import statistics
 import sys
 from collections import Counter
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+
+from googleapiclient.errors import HttpError
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -18,6 +19,7 @@ VENDOR_DIR = Path(__file__).resolve().parent / "vendor"
 sys.path.insert(0, str(VENDOR_DIR))
 
 from upload_to_youtube import get_authenticated_service  # noqa: E402
+from google_oauth_service import build_authenticated_service  # noqa: E402
 
 
 STOPWORDS = {
@@ -51,6 +53,7 @@ class VideoMetric:
     duration_seconds: int
     views_per_day: float
     url: str
+    analytics: dict[str, Any] | None = None
 
 
 def parse_args() -> argparse.Namespace:
@@ -60,6 +63,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config", default=str(Path(__file__).resolve().parent / "channel_improvement_config.json"))
     parser.add_argument("--output-root", default=str(BASE_DIR / "reports" / "channel-improvement"))
     parser.add_argument("--channel-title", default="The English Pod Club")
+    parser.add_argument("--analytics-token-file")
+    parser.add_argument("--analytics-client-secrets")
     return parser.parse_args()
 
 
@@ -69,6 +74,20 @@ def load_config(path: Path) -> dict[str, Any]:
 
 def auth(token_file: str, client_secrets: str):
     return get_authenticated_service(token_file=token_file, client_secrets_file=client_secrets)
+
+
+def auth_analytics(token_file: str, client_secrets: str):
+    return build_authenticated_service(
+        token_file=token_file,
+        client_secrets_file=client_secrets,
+        api_service_name="youtubeAnalytics",
+        api_version="v2",
+        scopes=[
+            "https://www.googleapis.com/auth/yt-analytics.readonly",
+            "https://www.googleapis.com/auth/youtube.readonly",
+        ],
+        port=8080,
+    )
 
 
 def batched(items: list[str], size: int) -> list[list[str]]:
@@ -351,10 +370,17 @@ def discover_competitors(
     return results
 
 
-def build_report_data(youtube, config: dict[str, Any], channel_title: str) -> dict[str, Any]:
+def build_report_data(
+    youtube,
+    config: dict[str, Any],
+    channel_title: str,
+    analytics_summary: dict[str, Any] | None = None,
+    own_video_analytics: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     own_channel = get_own_channel(youtube, own_channel_id=config.get("own_channel_id"))
     own_recent_limit = safe_int(config.get("own_recent_videos", 10))
     own_recent_videos = channel_recent_metrics(youtube, own_channel, own_recent_limit)
+    own_recent_videos = attach_analytics_to_videos(own_recent_videos, own_video_analytics or {})
 
     competitors = []
     min_competitor_video_seconds = safe_int(config.get("min_competitor_video_seconds", 180))
@@ -449,6 +475,7 @@ def build_report_data(youtube, config: dict[str, Any], channel_title: str) -> di
             "view_count": safe_int(own_stats.get("viewCount")),
             "video_count": safe_int(own_stats.get("videoCount")),
             "channel_url": f"https://www.youtube.com/channel/{own_channel['id']}",
+            "analytics_summary": analytics_summary,
             "recent_videos": [video.__dict__ for video in own_recent_videos],
             "avg_views_recent": own_avg_views,
             "avg_views_per_day_recent": average_views_per_day(own_recent_videos),
@@ -461,6 +488,129 @@ def build_report_data(youtube, config: dict[str, Any], channel_title: str) -> di
         "missing_title_tokens": missing_title_tokens,
         "suggestions": suggestions,
     }
+
+
+def analytics_rows_to_dicts(response: dict[str, Any]) -> list[dict[str, Any]]:
+    headers = [header["name"] for header in response.get("columnHeaders", [])]
+    rows = response.get("rows", [])
+    return [dict(zip(headers, row)) for row in rows]
+
+
+def safe_float(value: Any) -> float:
+    try:
+        return float(value)
+    except Exception:
+        return 0.0
+
+
+def build_analytics_window() -> tuple[str, str]:
+    end = date.today() - timedelta(days=1)
+    start = end - timedelta(days=27)
+    return start.isoformat(), end.isoformat()
+
+
+def query_channel_analytics(analytics_service) -> dict[str, Any] | None:
+    start_date, end_date = build_analytics_window()
+    try:
+        base = analytics_service.reports().query(
+            ids="channel==MINE",
+            startDate=start_date,
+            endDate=end_date,
+            metrics="views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,likes,comments,subscribersGained,subscribersLost",
+        ).execute()
+        base_row = analytics_rows_to_dicts(base)
+        summary = base_row[0] if base_row else {}
+        try:
+            impressions = analytics_service.reports().query(
+                ids="channel==MINE",
+                startDate=start_date,
+                endDate=end_date,
+                metrics="impressions,impressionsCtr",
+            ).execute()
+            impression_row = analytics_rows_to_dicts(impressions)
+            if impression_row:
+                summary.update(impression_row[0])
+        except HttpError:
+            pass
+        summary["startDate"] = start_date
+        summary["endDate"] = end_date
+        return summary
+    except HttpError:
+        return None
+
+
+def query_video_analytics(analytics_service, video_ids: list[str]) -> dict[str, dict[str, Any]]:
+    if not video_ids:
+        return {}
+    start_date, end_date = build_analytics_window()
+    try:
+        response = analytics_service.reports().query(
+            ids="channel==MINE",
+            startDate=start_date,
+            endDate=end_date,
+            dimensions="video",
+            filters="video==" + ",".join(video_ids),
+            metrics="views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,likes,comments,subscribersGained,subscribersLost",
+        ).execute()
+    except HttpError:
+        return {}
+
+    rows_by_video: dict[str, dict[str, Any]] = {}
+    for row in analytics_rows_to_dicts(response):
+        video_id = str(row.pop("video", ""))
+        if not video_id:
+            continue
+        rows_by_video[video_id] = row
+
+    try:
+        impression_response = analytics_service.reports().query(
+            ids="channel==MINE",
+            startDate=start_date,
+            endDate=end_date,
+            dimensions="video",
+            filters="video==" + ",".join(video_ids),
+            metrics="impressions,impressionsCtr",
+        ).execute()
+        for row in analytics_rows_to_dicts(impression_response):
+            video_id = str(row.pop("video", ""))
+            if video_id:
+                rows_by_video.setdefault(video_id, {}).update(row)
+    except HttpError:
+        pass
+
+    for row in rows_by_video.values():
+        row["startDate"] = start_date
+        row["endDate"] = end_date
+    return rows_by_video
+
+
+def attach_analytics_to_videos(videos: list[VideoMetric], analytics_rows: dict[str, dict[str, Any]]) -> list[VideoMetric]:
+    attached: list[VideoMetric] = []
+    for video in videos:
+        payload = analytics_rows.get(video.video_id)
+        video.analytics = payload or None
+        attached.append(video)
+    return attached
+
+
+def analytics_summary_lines(analytics_summary: dict[str, Any] | None) -> list[str]:
+    if not analytics_summary:
+        return ["- Analytics metrics unavailable. Add an analytics-scoped OAuth token to enable CTR/watch-time reporting."]
+    views = safe_int(analytics_summary.get("views"))
+    watched = safe_float(analytics_summary.get("estimatedMinutesWatched"))
+    avg_duration = safe_float(analytics_summary.get("averageViewDuration"))
+    avg_percent = safe_float(analytics_summary.get("averageViewPercentage"))
+    impressions = safe_int(analytics_summary.get("impressions"))
+    ctr = safe_float(analytics_summary.get("impressionsCtr"))
+    return [
+        f"- Window: `{analytics_summary.get('startDate')}` to `{analytics_summary.get('endDate')}`",
+        f"- Views: `{views}`",
+        f"- Watch time (minutes): `{watched:.2f}`",
+        f"- Average view duration: `{int(avg_duration)} sec`",
+        f"- Average percentage viewed: `{avg_percent:.2f}%`",
+        f"- Impressions: `{impressions}`",
+        f"- CTR: `{ctr:.2f}%`",
+    ]
 
 
 def write_json(path: Path, data: dict[str, Any]) -> None:
@@ -487,10 +637,21 @@ def make_markdown(report: dict[str, Any]) -> str:
     lines.append(f"- Avg recent views/day: `{own['avg_views_per_day_recent']}`")
     lines.append(f"- Median recent duration: `{format_duration(own['median_duration_recent_seconds'])}`")
     lines.append("")
+    lines.append("## Your Analytics (Last 28 Days)")
+    lines.extend(analytics_summary_lines(own.get("analytics_summary")))
+    lines.append("")
     lines.append("## Recent Uploads")
     for video in own["recent_videos"][:5]:
+        analytics = video.get("analytics") or {}
+        suffix = ""
+        if analytics:
+            suffix = (
+                f" | CTR `{safe_float(analytics.get('impressionsCtr')):.2f}%`"
+                f" | avg view `{int(safe_float(analytics.get('averageViewDuration')))} sec`"
+                f" | avg viewed `{safe_float(analytics.get('averageViewPercentage')):.2f}%`"
+            )
         lines.append(
-            f"- [{video['title']}]({video['url']}) | `{video['views']}` views | `{video['views_per_day']}` views/day | `{format_duration(video['duration_seconds'])}`"
+            f"- [{video['title']}]({video['url']}) | `{video['views']}` views | `{video['views_per_day']}` views/day | `{format_duration(video['duration_seconds'])}`{suffix}"
         )
     lines.append("")
     lines.append("## Competitor Radar")
@@ -534,8 +695,26 @@ def main() -> int:
     args = parse_args()
     config = load_config(Path(args.config))
     youtube = auth(args.token_file, args.client_secrets)
+    analytics_summary = None
+    own_video_analytics: dict[str, dict[str, Any]] = {}
+    if args.analytics_token_file and args.analytics_client_secrets:
+        analytics_service = auth_analytics(args.analytics_token_file, args.analytics_client_secrets)
+        analytics_summary = query_channel_analytics(analytics_service)
+        own_channel = get_own_channel(youtube, own_channel_id=config.get("own_channel_id"))
+        own_video_ids = fetch_playlist_video_ids(
+            youtube,
+            own_channel.get("contentDetails", {}).get("relatedPlaylists", {}).get("uploads", ""),
+            safe_int(config.get("own_recent_videos", 10)),
+        )
+        own_video_analytics = query_video_analytics(analytics_service, own_video_ids)
 
-    report = build_report_data(youtube, config, args.channel_title)
+    report = build_report_data(
+        youtube,
+        config,
+        args.channel_title,
+        analytics_summary=analytics_summary,
+        own_video_analytics=own_video_analytics,
+    )
 
     output_root = Path(args.output_root)
     day_dir = output_root / datetime.now().strftime("%Y-%m-%d")
