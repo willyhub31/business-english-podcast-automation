@@ -45,6 +45,8 @@ DEFAULT_CHANNEL_PROFILE = os.environ.get("BUSINESS_ENGLISH_CHANNEL_PROFILE", "ch
 DEFAULT_CHANNEL_CONFIG = os.environ.get("YOUTUBE_CHANNEL_CONFIG")
 DEFAULT_TOKEN_FILE = os.environ.get("YOUTUBE_TOKEN_FILE")
 DEFAULT_CLIENT_SECRETS = os.environ.get("YOUTUBE_CLIENT_SECRETS")
+DEFAULT_BUILD_TIMEOUT_SEC = int(os.environ.get("BUSINESS_ENGLISH_BUILD_TIMEOUT_SEC", "4500"))
+DEFAULT_UPLOAD_TIMEOUT_SEC = int(os.environ.get("BUSINESS_ENGLISH_UPLOAD_TIMEOUT_SEC", "1800"))
 
 DEFAULT_TAGS = [
     "business english",
@@ -69,27 +71,36 @@ def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
 
 
-def run_command(command: list[str], env: dict[str, str] | None = None) -> str:
-    process = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        env=env,
-    )
-    assert process.stdout is not None
-    lines: list[str] = []
-    for line in process.stdout:
-        print(line, end="")
-        lines.append(line)
-    process.wait()
-    output = "".join(lines)
-    if process.returncode != 0:
+def run_command(
+    command: list[str],
+    env: dict[str, str] | None = None,
+    timeout_sec: int | None = None,
+) -> str:
+    try:
+        completed = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env=env,
+            timeout=timeout_sec,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        output = ((exc.stdout or "") + (exc.stderr or "")).strip()
+        tail = "\n".join(output.splitlines()[-80:]) if output else "(no output captured)"
+        raise RuntimeError(
+            f"Command timed out after {timeout_sec} seconds: {' '.join(command)}\n\nLast output:\n{tail}"
+        ) from exc
+
+    output = (completed.stdout or "") + (completed.stderr or "")
+    if output:
+        print(output, end="" if output.endswith("\n") else "\n")
+    if completed.returncode != 0:
         tail = "\n".join(output.splitlines()[-80:])
         raise RuntimeError(
-            f"Command failed ({process.returncode}): {' '.join(command)}\n\nLast output:\n{tail}"
+            f"Command failed ({completed.returncode}): {' '.join(command)}\n\nLast output:\n{tail}"
         )
     return output
 
@@ -181,6 +192,7 @@ def run_build(
     channel_title: str,
     female_voice: str,
     male_voice: str,
+    timeout_sec: int,
 ) -> str:
     if not os.environ.get("GEMINI_API_KEY"):
         raise RuntimeError("GEMINI_API_KEY is not set in the environment.")
@@ -202,7 +214,7 @@ def run_build(
         "--male-voice",
         male_voice,
     ]
-    return run_command(command, env=os.environ.copy())
+    return run_command(command, env=os.environ.copy(), timeout_sec=timeout_sec)
 
 
 def run_upload(
@@ -215,6 +227,7 @@ def run_upload(
     run_dir: Path,
     verified: dict,
     synthetic_media: str,
+    timeout_sec: int,
 ) -> str:
     command = [
         sys.executable,
@@ -231,7 +244,7 @@ def run_upload(
 
     if upload_mode == "auth-check":
         command.append("--auth-only")
-        return run_command(command)
+        return run_command(command, timeout_sec=timeout_sec)
 
     title = read_text(Path(verified["title"]))
     description = read_text(Path(verified["description"]))
@@ -255,7 +268,7 @@ def run_upload(
     thumbnail = run_dir / "business_english_episode_frame_v2.png"
     if thumbnail.exists():
         command.extend(["--thumbnail", str(thumbnail)])
-    return run_command(command)
+    return run_command(command, timeout_sec=timeout_sec)
 
 
 def parse_args() -> argparse.Namespace:
@@ -324,6 +337,7 @@ def main() -> int:
                 channel_title=args.channel_title,
                 female_voice=args.female_voice,
                 male_voice=args.male_voice,
+                timeout_sec=DEFAULT_BUILD_TIMEOUT_SEC,
             )
 
         print_block("VERIFYING OUTPUTS")
@@ -345,6 +359,7 @@ def main() -> int:
                 run_dir=run_dir,
                 verified=verified,
                 synthetic_media="yes",
+                timeout_sec=DEFAULT_UPLOAD_TIMEOUT_SEC,
             )
 
         now = datetime.now().isoformat(timespec="seconds")
