@@ -902,7 +902,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
 def concat_audio(section_mp3_paths: List[Path], output_mp3: Path) -> None:
     concat_file = output_mp3.with_suffix(".concat.txt")
-    concat_lines = [f"file '{path.as_posix()}'" for path in section_mp3_paths]
+    # ffmpeg resolves relative concat entries from the concat file's directory.
+    # Use absolute paths so nested section paths are not prefixed twice on CI.
+    concat_lines = [f"file '{path.resolve().as_posix()}'" for path in section_mp3_paths]
     concat_file.write_text("\n".join(concat_lines) + "\n", encoding="utf-8")
     run_command(
         [
