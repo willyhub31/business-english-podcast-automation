@@ -1,4 +1,4 @@
-name: Daily Channel Improvement
+name: Daily French Channel Improvement
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ jobs:
       contents: write
     env:
       BUSINESS_ENGLISH_BASE_DIR: ${{ github.workspace }}
-      BUSINESS_ENGLISH_CHANNEL_TITLE: The English Pod Club
+      BUSINESS_ENGLISH_CHANNEL_TITLE: The French Pod Club
       YOUTUBE_CHANNEL_CONFIG: ${{ github.workspace }}/automation/vendor/youtube_channel_profiles.json
       YOUTUBE_TOKEN_FILE: ${{ github.workspace }}/secrets/youtube_token_the_english_pod_club.pickle
       YOUTUBE_CLIENT_SECRETS: ${{ github.workspace }}/secrets/client_secrets_channel2.json

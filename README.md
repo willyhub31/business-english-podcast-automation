@@ -1,28 +1,50 @@
-# Business English Podcast Automation
+# French for Canada Podcast
 
-This repository generates and uploads one Business English podcast-style YouTube video per day.
+This workspace is now focused on French-learning podcast videos for people preparing for life in Canada.
 
-It includes:
+Current positioning:
 
-- a Gemini-based episode builder
-- a GitHub Actions daily publishing workflow
-- YouTube upload automation
-- topic rotation state so each run advances to the next lesson
+- practical French for Canada
+- Quebec and Montreal-style daily situations
+- newcomer vocabulary for housing, work, health, appointments, and TEF-style speaking/listening
+- podcast scenes with Sophie, Leo, and guest role-play actors
 
-Main workflow:
+## Folder Layout
 
-- [daily-business-english.yml](./.github/workflows/daily-business-english.yml)
+- `automation/` - builders, YouTube helpers, and workflow scripts
+- `branding/` - channel art, logo, watermark, and thumbnail assets
+- `runs/` - generated test episodes and output files
+- `video/` - source background videos
+- `reports/` - channel improvement reports
+- `archive/business-english-legacy/` - old Business English renders and assets kept for reference
 
-Setup guide:
+## Current Long Test
 
-- [GITHUB_ACTIONS_SETUP.md](./GITHUB_ACTIONS_SETUP.md)
+Main builder:
 
-Core scripts:
+- `automation/build_french_for_canada_long_episode.py`
 
-- [build_business_english_episode.py](./build_business_english_episode.py)
-- [automation/run_daily_business_english_job.py](./automation/run_daily_business_english_job.py)
+Default background:
 
-Important:
+- `video/download.mp4`
 
-- Add the required GitHub Secrets before enabling the schedule.
-- The workflow generates its own simple background video on the runner, so the local MP4 background is not required in the repo.
+Run locally:
+
+```powershell
+$env:GEMINI_API_KEY="YOUR_KEY"
+python "automation/build_french_for_canada_long_episode.py" --background "video/download.mp4"
+```
+
+The builder creates:
+
+- MP3 audio
+- MP4 video
+- SRT captions
+- ASS burned-caption style
+- transcript
+- YouTube title and description drafts
+- preview frame
+
+## Legacy Note
+
+Some old automation files still reference Business English. They are left in place until the daily cloud publishing workflow is rebuilt for the French-for-Canada niche.

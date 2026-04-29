@@ -3,6 +3,7 @@
 __pycache__/
 *.pyc
 .playwright-cli/
+archive/
 
 # Local automation runtime
 automation/.env.worker

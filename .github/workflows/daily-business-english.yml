@@ -1,4 +1,4 @@
-name: Daily Business English Publish
+name: Daily French For Canada Publish
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ on:
     - cron: "17 7 * * *"
 
 concurrency:
-  group: daily-business-english-publish
+  group: daily-french-for-canada-publish
   cancel-in-progress: false
 
 jobs:
@@ -31,15 +31,7 @@ jobs:
       contents: write
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      BUSINESS_ENGLISH_BASE_DIR: ${{ github.workspace }}
-      BUSINESS_ENGLISH_OUTPUT_ROOT: ${{ github.workspace }}/runs
-      BUSINESS_ENGLISH_BUILD_SCRIPT: ${{ github.workspace }}/build_business_english_episode.py
-      BUSINESS_ENGLISH_BACKGROUND: ${{ github.workspace }}/generated_background.mp4
-      BUSINESS_ENGLISH_UPLOAD_SCRIPT: ${{ github.workspace }}/automation/vendor/upload_to_youtube.py
-      BUSINESS_ENGLISH_CHANNEL_TITLE: The English Pod Club
-      BUSINESS_ENGLISH_FEMALE_VOICE: Sadachbia
-      BUSINESS_ENGLISH_MALE_VOICE: Puck
-      BUSINESS_ENGLISH_CHANNEL_PROFILE: the_english_pod_club
+      FRENCH_CANADA_CHANNEL_PROFILE: the_french_pod_club
       YOUTUBE_CHANNEL_CONFIG: ${{ github.workspace }}/automation/vendor/youtube_channel_profiles.json
       YOUTUBE_TOKEN_FILE: ${{ github.workspace }}/secrets/youtube_token_the_english_pod_club.pickle
       YOUTUBE_CLIENT_SECRETS: ${{ github.workspace }}/secrets/client_secrets_channel2.json
@@ -66,13 +58,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r automation/requirements-worker.txt
-
-      - name: Create generated background video
-        run: |
-          ffmpeg -y \
-            -f lavfi -i color=c=0x10233c:s=1280x720:d=720 \
-            -vf "drawbox=x=0:y=600:w=1280:h=120:color=0xf2c94cff:t=fill,format=yuv420p" \
-            -c:v libx264 -pix_fmt yuv420p generated_background.mp4
 
       - name: Restore YouTube credential files
         shell: python
@@ -101,6 +86,7 @@ jobs:
           INPUT_UPLOAD_MODE: ${{ github.event.inputs.upload_mode }}
           EVENT_NAME: ${{ github.event_name }}
         run: |
+          import json
           import os
           import subprocess
           import sys
@@ -108,7 +94,6 @@ jobs:
 
           workspace = Path.cwd()
           channel_config = str((workspace / "automation/vendor/youtube_channel_profiles.json").resolve())
-          token_file = str((workspace / "secrets/youtube_token_channel2.pickle").resolve())
           client_secrets = str((workspace / "secrets/client_secrets_channel2.json").resolve())
 
           upload_mode = os.environ.get("INPUT_UPLOAD_MODE") or "private"
@@ -122,7 +107,7 @@ jobs:
                   sys.executable,
                   "automation/vendor/upload_to_youtube.py",
                   "--channel-profile",
-                  "the_english_pod_club",
+                  os.environ["FRENCH_CANADA_CHANNEL_PROFILE"],
                   "--channel-config",
                   channel_config,
                   "--token-file",
@@ -134,56 +119,66 @@ jobs:
               subprocess.run(command, check=True)
               raise SystemExit(0)
 
-          command = [
+          title = (os.environ.get("INPUT_TOPIC") or "").strip() or "French for Canada: First Appointments and Daily Life"
+
+          build_command = [
               sys.executable,
-              "automation/run_daily_business_english_job.py",
-              "--queue-file",
-              "automation/business_english_topics.txt",
-              "--state-file",
-              "automation/automation_state.json",
-              "--log-file",
-              "automation/automation_history.jsonl",
+              "automation/build_french_for_canada_long_episode.py",
               "--output-root",
               "runs",
+              "--background",
+              "video/download.mp4",
+              "--title",
+              title,
+          ]
+          subprocess.run(build_command, check=True, timeout=5400)
+
+          summaries = sorted((workspace / "runs").glob("*/build_summary.json"), key=lambda path: path.stat().st_mtime)
+          if not summaries:
+              raise RuntimeError("No build_summary.json was created")
+          summary = json.loads(summaries[-1].read_text(encoding="utf-8"))
+
+          video = summary["mp4"]
+          youtube_title = Path(summary["youtube_title"]).read_text(encoding="utf-8").strip()
+          youtube_description = Path(summary["youtube_description"]).read_text(encoding="utf-8").strip()
+          thumbnail = workspace / "branding/french_for_canada_thumbnail.png"
+
+          upload_command = [
+              sys.executable,
+              "automation/vendor/upload_to_youtube.py",
               "--channel-profile",
-              "the_english_pod_club",
+              os.environ["FRENCH_CANADA_CHANNEL_PROFILE"],
               "--channel-config",
               channel_config,
               "--token-file",
               str((workspace / "secrets/youtube_token_the_english_pod_club.pickle").resolve()),
               "--client-secrets",
               client_secrets,
+              "--video",
+              video,
+              "--title",
+              youtube_title,
+              "--description",
+              youtube_description,
+              "--tags",
+              "French for Canada,Quebec French,learn French,TEF practice,French podcast,French listening,French speaking,immigration French,Canada newcomers",
+              "--category",
+              "27",
+              "--privacy",
+              "private",
               "--synthetic-media",
               "yes",
           ]
-          command.extend(["--upload-mode", upload_mode])
-
-          topic = (os.environ.get("INPUT_TOPIC") or "").strip()
-          if topic:
-              command.extend(["--episode-topic", topic])
-
-          subprocess.run(command, check=True)
+          if thumbnail.exists():
+              upload_command.extend(["--thumbnail", str(thumbnail)])
+          if upload_mode != "none":
+              subprocess.run(upload_command, check=True, timeout=3600)
 
       - name: Upload episode artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: business-english-${{ github.run_number }}
+          name: french-for-canada-${{ github.run_number }}
           if-no-files-found: warn
           path: |
             runs/**
-            automation/automation_history.jsonl
-            automation/automation_state.json
-
-      - name: Persist automation state
-        if: success()
-        shell: bash
-        run: |
-          if [ -z "$(git status --porcelain -- automation/automation_state.json automation/automation_history.jsonl)" ]; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add automation/automation_state.json automation/automation_history.jsonl
-          git commit -m "chore: advance business english automation state"
-          git push

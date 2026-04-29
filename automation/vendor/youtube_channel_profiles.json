@@ -1,5 +1,5 @@
 {
-  "default_profile": "the_english_pod_club",
+  "default_profile": "the_french_pod_club",
   "profiles": {
     "channel1": {
       "token_file": "youtube_token_pov_shadow_systems.pickle",
@@ -21,7 +21,13 @@
     "the_english_pod_club": {
       "token_file": "youtube_token_the_english_pod_club.pickle",
       "client_secrets": "client_secrets_channel2.json",
-      "expected_channel_name": "The English Pod Club",
+      "expected_channel_name": "The French Pod Club",
+      "expected_channel_id": "UCkjtce-JgVBMwp8pNNKdPdA"
+    },
+    "the_french_pod_club": {
+      "token_file": "youtube_token_the_english_pod_club.pickle",
+      "client_secrets": "client_secrets_channel2.json",
+      "expected_channel_name": "The French Pod Club",
       "expected_channel_id": "UCkjtce-JgVBMwp8pNNKdPdA"
     }
   }
