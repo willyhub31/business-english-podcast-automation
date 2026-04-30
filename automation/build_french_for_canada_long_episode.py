@@ -14,6 +14,7 @@ from urllib import error, request
 
 
 API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
+TEXT_MODEL = "gemini-2.5-flash"
 TTS_MODELS = [
     "gemini-3.1-flash-tts-preview",
     "gemini-2.5-flash-preview-tts",
@@ -180,6 +181,116 @@ SECTIONS: list[Section] = [
 ]
 
 
+def extract_text(response_json: dict) -> str:
+    try:
+        parts = response_json["candidates"][0]["content"]["parts"]
+    except (KeyError, IndexError, TypeError) as exc:
+        raise RuntimeError(f"Unexpected Gemini text response: {response_json}") from exc
+    return "".join(part.get("text", "") for part in parts)
+
+
+def parse_json_object(text: str) -> dict:
+    cleaned = text.strip()
+    fenced = re.search(r"```(?:json)?\s*(.*?)\s*```", cleaned, flags=re.DOTALL | re.IGNORECASE)
+    if fenced:
+        cleaned = fenced.group(1).strip()
+    start = cleaned.find("{")
+    end = cleaned.rfind("}")
+    if start == -1 or end == -1 or end <= start:
+        raise ValueError(f"No JSON object found in Gemini response: {text[:500]}")
+    return json.loads(cleaned[start : end + 1])
+
+
+def generate_sections_from_topic(api_key: str, title: str) -> tuple[list[Section], str]:
+    prompt = f"""Create an 8-10 minute French-learning podcast script as JSON only.
+
+Channel niche: French for Canada.
+Episode title: {title}
+
+Rules:
+- Use clear French with a light Quebec/Montreal influence, but keep it easy for international learners.
+- Main hosts are Sophie and Leo.
+- Live situations use Maya and Daniel.
+- Each section must use only two speakers:
+  - host sections: Sophie and Leo
+  - live situation sections: Maya and Daniel
+- Make the episode specific to the title. Do not reuse apartment/clinic examples unless the title is about those topics.
+- Include warm human banter, two realistic live situations, phrase breakdowns, repeat-after-me practice, and a short recap.
+- The two live situation sections must contain the actual dialogue, not only an introduction to the dialogue.
+- Do not write "listen to the scene" unless the next section is a real Maya/Daniel scene.
+- Use subtle English audio tags in square brackets, like [warmly], [thinking], [encouragingly], [short pause].
+- Target about 1,050 to 1,250 spoken French words total.
+- Return valid JSON only, no markdown.
+
+Required sections exactly:
+1. 01_warm_open, speaker_group hosts, 6-8 lines with Sophie and Leo.
+2. 02_key_vocabulary, speaker_group hosts, 8-10 lines with Sophie and Leo.
+3. 03_live_situation_one, speaker_group scene, 10-14 lines with Maya and Daniel only. This must be real dialogue.
+4. 04_breakdown_one, speaker_group hosts, 8-10 lines with Sophie and Leo.
+5. 05_live_situation_two, speaker_group scene, 10-14 lines with Maya and Daniel only. This must be real dialogue.
+6. 06_breakdown_two, speaker_group hosts, 8-10 lines with Sophie and Leo.
+7. 07_repeat_practice, speaker_group hosts, 10-12 lines with Sophie and Leo.
+8. 08_recap_close, speaker_group hosts, 6-8 lines with Sophie and Leo.
+
+JSON shape:
+{{
+  "description": "one short YouTube description sentence specific to this episode",
+  "tags": ["tag one", "tag two"],
+  "sections": [
+    {{
+      "slug": "01_warm_open",
+      "title": "Warm open",
+      "speaker_group": "hosts",
+      "lines": [
+        {{"speaker": "Sophie", "text": "[warmly] ..."}},
+        {{"speaker": "Leo", "text": "[calmly] ..."}}
+      ]
+    }}
+  ]
+}}
+"""
+    response_json = call_gemini(
+        TEXT_MODEL,
+        {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.85,
+                "responseMimeType": "application/json",
+            },
+        },
+        api_key,
+    )
+    data = parse_json_object(extract_text(response_json))
+    sections: list[Section] = []
+    for raw_section in data.get("sections", []):
+        group = str(raw_section.get("speaker_group", "hosts")).strip().lower()
+        speakers = SCENE_VOICES if group == "scene" else HOST_VOICES
+        lines = []
+        for raw_line in raw_section.get("lines", []):
+            speaker = str(raw_line.get("speaker", "")).strip()
+            text = str(raw_line.get("text", "")).strip()
+            if speaker in speakers and text:
+                lines.append((speaker, text))
+        if lines:
+            sections.append(
+                Section(
+                    slug=slugify(str(raw_section.get("slug") or raw_section.get("title") or f"section-{len(sections)+1}")),
+                    title=str(raw_section.get("title") or f"Section {len(sections)+1}"),
+                    speakers=speakers,
+                    lines=lines,
+                )
+            )
+    scene_sections = [section for section in sections if section.speakers == SCENE_VOICES]
+    if len(sections) < 8:
+        raise RuntimeError("Gemini generated too few valid sections for the episode")
+    if len(scene_sections) < 2:
+        raise RuntimeError("Gemini did not generate two valid Maya/Daniel live situation sections")
+    for section in scene_sections:
+        if len(section.lines) < 8:
+            raise RuntimeError(f"Live situation section is too short: {section.title}")
+    return sections, str(data.get("description", "")).strip()
+
+
 def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
 
@@ -331,10 +442,10 @@ def seconds_to_ass(value: float) -> str:
     return f"{hours}:{minutes:02d}:{seconds:02d}.{centis:02d}"
 
 
-def make_caption_segments(section_durations: dict[str, float]) -> list[tuple[float, float, str]]:
+def make_caption_segments(sections: list[Section], section_durations: dict[str, float]) -> list[tuple[float, float, str]]:
     cursor = 0.0
     segments: list[tuple[float, float, str]] = []
-    for section in SECTIONS:
+    for section in sections:
         duration = section_durations[section.slug]
         total_words = max(sum(word_count(line) for _, line in section.lines), 1)
         local = cursor
@@ -351,9 +462,9 @@ def make_caption_segments(section_durations: dict[str, float]) -> list[tuple[flo
     return segments
 
 
-def write_transcript(path: Path) -> None:
+def write_transcript(path: Path, sections: list[Section]) -> None:
     lines: list[str] = []
-    for section in SECTIONS:
+    for section in sections:
         lines.append(f"# {section.title}")
         for speaker, line in section.lines:
             lines.append(f"{speaker}: {clean_for_caption(line)}")
@@ -484,6 +595,8 @@ def main() -> int:
     parser.add_argument("--output-root", default="runs")
     parser.add_argument("--background", default="video/download.mp4")
     parser.add_argument("--title", default="French for Canada: First Appointments and Daily Life")
+    parser.add_argument("--static-template", action="store_true")
+    parser.add_argument("--script-only", action="store_true")
     args = parser.parse_args()
 
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
@@ -500,11 +613,50 @@ def main() -> int:
     sections_dir = run_dir / "sections"
     sections_dir.mkdir(parents=True, exist_ok=True)
 
+    if args.static_template:
+        sections = SECTIONS
+        generated_description = ""
+    else:
+        sections, generated_description = generate_sections_from_topic(api_key, args.title)
+
+    if args.script_only:
+        transcript_path = run_dir / "french_for_canada_long_transcript.txt"
+        summary_path = run_dir / "build_summary.json"
+        title_path = run_dir / "youtube_title.txt"
+        description_path = run_dir / "youtube_description.txt"
+        write_transcript(transcript_path, sections)
+        title_path.write_text(args.title + "\n", encoding="utf-8")
+        description_path.write_text(
+            "\n".join(
+                [
+                    "Learn real French for life in Canada with Sophie and Leo.",
+                    "",
+                    generated_description or f"In this episode: practical Canadian French for {args.title}.",
+                    "",
+                    "Synthetic media disclosure: this educational video uses AI-generated voices and AI-assisted visuals.",
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        summary = {
+            "title": args.title,
+            "script_only": True,
+            "run_dir": str(run_dir),
+            "transcript": str(transcript_path),
+            "youtube_title": str(title_path),
+            "youtube_description": str(description_path),
+            "sections": [section.title for section in sections],
+        }
+        summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(json.dumps(summary, indent=2, ensure_ascii=False))
+        return 0
+
     wav_paths: list[Path] = []
     section_durations: dict[str, float] = {}
     models_used: dict[str, str] = {}
 
-    for section in SECTIONS:
+    for section in sections:
         wav_path, model = render_section(section, api_key, sections_dir)
         wav_paths.append(wav_path)
         section_durations[section.slug] = ffprobe_duration(wav_path)
@@ -524,8 +676,8 @@ def main() -> int:
 
     concat_audio(wav_paths, concat_path, wav_output, mp3_output)
     duration = ffprobe_duration(mp3_output)
-    segments = make_caption_segments(section_durations)
-    write_transcript(transcript_path)
+    segments = make_caption_segments(sections, section_durations)
+    write_transcript(transcript_path, sections)
     write_srt(srt_path, segments)
     write_ass(ass_path, segments)
     build_video(background, mp3_output, ass_path, mp4_path, frame_path)
@@ -536,7 +688,7 @@ def main() -> int:
             [
                 "Learn real French for life in Canada with Sophie and Leo.",
                 "",
-                "In this episode: newcomer phrases, apartment visits, clinic appointments, TEF-style clarification, and repeat-after-me practice.",
+                generated_description or f"In this episode: practical Canadian French for {args.title}.",
                 "",
                 "Synthetic media disclosure: this educational video uses AI-generated voices and AI-assisted visuals.",
             ]

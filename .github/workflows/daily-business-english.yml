@@ -120,6 +120,15 @@ jobs:
               raise SystemExit(0)
 
           title = (os.environ.get("INPUT_TOPIC") or "").strip() or "French for Canada: First Appointments and Daily Life"
+          if not (os.environ.get("INPUT_TOPIC") or "").strip():
+              topics_path = workspace / "automation/french_for_canada_topics.txt"
+              topics = [
+                  line.strip()
+                  for line in topics_path.read_text(encoding="utf-8").splitlines()
+                  if line.strip() and not line.strip().startswith("#")
+              ]
+              run_number = int(os.environ.get("GITHUB_RUN_NUMBER", "1"))
+              title = topics[(run_number - 1) % len(topics)]
 
           build_command = [
               sys.executable,
