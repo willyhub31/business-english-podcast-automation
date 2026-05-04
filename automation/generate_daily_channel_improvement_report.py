@@ -691,22 +691,96 @@ def make_markdown(report: dict[str, Any]) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
+def make_auth_failure_report(channel_title: str, exc: Exception) -> dict[str, Any]:
+    return {
+        "status": "auth_failed",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "channel_title": channel_title,
+        "error_type": type(exc).__name__,
+        "error": str(exc),
+        "required_repair": [
+            "Re-authenticate the YouTube upload OAuth token.",
+            "Update the GitHub secret YOUTUBE_TOKEN_PICKLE_B64 with the new token pickle.",
+            "If analytics are needed, re-authenticate the YouTube Analytics OAuth token and update YOUTUBE_ANALYTICS_TOKEN_PICKLE_B64.",
+        ],
+    }
+
+
+def make_auth_failure_markdown(report: dict[str, Any]) -> str:
+    lines = [
+        "# Daily Channel Improvement Report",
+        "",
+        f"Generated: `{report['generated_at']}`",
+        "",
+        "## Status",
+        "- YouTube authentication failed before channel stats could be loaded.",
+        f"- Channel target: `{report['channel_title']}`",
+        f"- Error type: `{report['error_type']}`",
+        f"- Error: `{report['error']}`",
+        "",
+        "## Required Repair",
+    ]
+    lines.extend(f"- {item}" for item in report["required_repair"])
+    lines.extend(
+        [
+            "",
+            "## Automation Impact",
+            "- Daily improvement analysis cannot read current channel stats until the token is replaced.",
+            "- Daily video publishing will also fail at upload time with the same revoked-token problem.",
+        ]
+    )
+    return "\n".join(lines).strip() + "\n"
+
+
+def write_report_outputs(output_root: Path, report: dict[str, Any], markdown: str) -> dict[str, str]:
+    day_dir = output_root / datetime.now().strftime("%Y-%m-%d")
+    latest_md = output_root / "latest_report.md"
+    latest_json = output_root / "latest_report.json"
+    day_md = day_dir / "report.md"
+    day_json = day_dir / "report.json"
+    summary_txt = output_root / "latest_summary.txt"
+
+    day_dir.mkdir(parents=True, exist_ok=True)
+    day_md.write_text(markdown, encoding="utf-8")
+    latest_md.write_text(markdown, encoding="utf-8")
+    write_json(day_json, report)
+    write_json(latest_json, report)
+    summary_txt.write_text(markdown, encoding="utf-8")
+    return {
+        "report_markdown": str(day_md),
+        "report_json": str(day_json),
+        "latest_markdown": str(latest_md),
+        "latest_json": str(latest_json),
+    }
+
+
 def main() -> int:
     args = parse_args()
     config = load_config(Path(args.config))
-    youtube = auth(args.token_file, args.client_secrets)
+    output_root = Path(args.output_root)
+    try:
+        youtube = auth(args.token_file, args.client_secrets)
+    except Exception as exc:  # noqa: BLE001
+        report = make_auth_failure_report(args.channel_title, exc)
+        paths = write_report_outputs(output_root, report, make_auth_failure_markdown(report))
+        print(json.dumps({"status": "auth_failed", **paths}, indent=2))
+        return 0
+
     analytics_summary = None
     own_video_analytics: dict[str, dict[str, Any]] = {}
     if args.analytics_token_file and args.analytics_client_secrets:
-        analytics_service = auth_analytics(args.analytics_token_file, args.analytics_client_secrets)
-        analytics_summary = query_channel_analytics(analytics_service)
-        own_channel = get_own_channel(youtube, own_channel_id=config.get("own_channel_id"))
-        own_video_ids = fetch_playlist_video_ids(
-            youtube,
-            own_channel.get("contentDetails", {}).get("relatedPlaylists", {}).get("uploads", ""),
-            safe_int(config.get("own_recent_videos", 10)),
-        )
-        own_video_analytics = query_video_analytics(analytics_service, own_video_ids)
+        try:
+            analytics_service = auth_analytics(args.analytics_token_file, args.analytics_client_secrets)
+            analytics_summary = query_channel_analytics(analytics_service)
+            own_channel = get_own_channel(youtube, own_channel_id=config.get("own_channel_id"))
+            own_video_ids = fetch_playlist_video_ids(
+                youtube,
+                own_channel.get("contentDetails", {}).get("relatedPlaylists", {}).get("uploads", ""),
+                safe_int(config.get("own_recent_videos", 10)),
+            )
+            own_video_analytics = query_video_analytics(analytics_service, own_video_ids)
+        except Exception as exc:  # noqa: BLE001
+            print(f"WARNING: YouTube Analytics authentication/query failed; continuing without analytics. {exc}")
 
     report = build_report_data(
         youtube,
@@ -716,29 +790,13 @@ def main() -> int:
         own_video_analytics=own_video_analytics,
     )
 
-    output_root = Path(args.output_root)
-    day_dir = output_root / datetime.now().strftime("%Y-%m-%d")
-    latest_md = output_root / "latest_report.md"
-    latest_json = output_root / "latest_report.json"
-    day_md = day_dir / "report.md"
-    day_json = day_dir / "report.json"
-    summary_txt = output_root / "latest_summary.txt"
-
     markdown = make_markdown(report)
-    day_dir.mkdir(parents=True, exist_ok=True)
-    day_md.write_text(markdown, encoding="utf-8")
-    latest_md.write_text(markdown, encoding="utf-8")
-    write_json(day_json, report)
-    write_json(latest_json, report)
-    summary_txt.write_text(markdown, encoding="utf-8")
+    paths = write_report_outputs(output_root, report, markdown)
 
     print(json.dumps(
         {
             "status": "ok",
-            "report_markdown": str(day_md),
-            "report_json": str(day_json),
-            "latest_markdown": str(latest_md),
-            "latest_json": str(latest_json),
+            **paths,
         },
         indent=2,
     ))

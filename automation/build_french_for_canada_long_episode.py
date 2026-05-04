@@ -291,6 +291,141 @@ JSON shape:
     return sections, str(data.get("description", "")).strip()
 
 
+def local_fallback_sections(title: str) -> tuple[list[Section], str]:
+    topic = title.replace("French for Canada:", "").strip() or "daily life in Canada"
+    description = f"Practice practical French for Canada with clear phrases for {topic}."
+    sections = [
+        Section(
+            slug="01_warm_open",
+            title=f"Warm open: {topic}",
+            speakers=HOST_VOICES,
+            lines=[
+                ("Sophie", f"[warmly] Salut Leo. Aujourd'hui, on travaille un sujet tres utile pour le Canada: {topic}."),
+                ("Leo", "[calmly] Exact. On va rester simple, naturel, et pratique. Pas de francais complique juste pour impressionner."),
+                ("Sophie", "[light laugh] Oui. Ici, le but n'est pas de gagner un concours de grammaire. Le but, c'est de parler avec calme dans une vraie situation."),
+                ("Leo", "[focused] On va ecouter deux mini-scenes avec Maya et Daniel, puis on va analyser les phrases importantes."),
+                ("Sophie", "[encouragingly] Si tu debutes, respire. Tu peux parler lentement, demander de repeter, et quand meme etre poli."),
+                ("Leo", "[clearly] A la fin, tu auras une petite methode: contexte, question claire, confirmation."),
+            ],
+        ),
+        Section(
+            slug="02_key_vocabulary",
+            title="Key vocabulary",
+            speakers=HOST_VOICES,
+            lines=[
+                ("Leo", f"[focused] Pour {topic}, retiens d'abord cette phrase: je voudrais avoir plus d'informations."),
+                ("Sophie", "[coach tone] Lentement: je voudrais avoir plus d'informations. Naturellement: je voudrais avoir plus d'informations."),
+                ("Leo", "[analytical] C'est poli. Plus doux que: je veux des informations."),
+                ("Sophie", "[warmly] Deuxieme phrase: est-ce que vous pouvez m'expliquer les prochaines etapes?"),
+                ("Leo", "[clearly] Les prochaines etapes, ca veut dire: what happens next."),
+                ("Sophie", "[encouragingly] Troisieme phrase: je veux etre sur de bien comprendre. C'est parfait quand tu es au telephone."),
+                ("Leo", "[focused] Et pour confirmer: donc, si je comprends bien, le rendez-vous est mardi a dix heures."),
+                ("Sophie", "[short pause] Maintenant, ecoutons Maya et Daniel dans une situation concrete."),
+            ],
+        ),
+        Section(
+            slug="03_live_situation_one",
+            title="Live situation one",
+            speakers=SCENE_VOICES,
+            lines=[
+                ("Maya", f"[polite] Bonjour, je vous appelle parce que j'ai une question sur {topic}."),
+                ("Daniel", "[professional] Bonjour. Bien sur, je vous ecoute."),
+                ("Maya", "[carefully] Je viens d'arriver au Canada, alors je prefere verifier les informations."),
+                ("Daniel", "[reassuringly] Aucun probleme. Qu'est-ce que vous voulez savoir exactement?"),
+                ("Maya", "[thinking] Je voudrais avoir plus d'informations sur les documents necessaires."),
+                ("Daniel", "[clear] D'accord. Vous avez besoin d'une piece d'identite et d'une preuve d'adresse."),
+                ("Maya", "[carefully] Est-ce que vous pouvez parler un peu plus lentement, s'il vous plait?"),
+                ("Daniel", "[slower] Bien sur. Une piece d'identite. Et une preuve d'adresse."),
+                ("Maya", "[relieved] Merci. Et quelles sont les prochaines etapes?"),
+                ("Daniel", "[helpful] Vous envoyez les documents, puis on confirme le rendez-vous par courriel."),
+                ("Maya", "[confirming] Donc, si je comprends bien, j'envoie les documents et j'attends le courriel."),
+                ("Daniel", "[friendly] Exactement. C'est parfait."),
+            ],
+        ),
+        Section(
+            slug="04_breakdown_one",
+            title="Breakdown one",
+            speakers=HOST_VOICES,
+            lines=[
+                ("Sophie", "[energized] Bonne scene. Maya ne parle pas vite, mais elle controle la conversation."),
+                ("Leo", "[analytical] Elle fait trois choses: elle donne le contexte, elle demande une explication, et elle confirme."),
+                ("Sophie", "[clearly] Phrase cle: je viens d'arriver au Canada. Cette phrase aide l'autre personne a comprendre ta situation."),
+                ("Leo", "[focused] Deuxieme phrase: quelles sont les prochaines etapes? C'est court, clair, et tres professionnel."),
+                ("Sophie", "[coach tone] Repete: quelles sont les prochaines etapes?"),
+                ("Leo", "[natural speed] Quelles sont les prochaines etapes?"),
+                ("Sophie", "[encouragingly] Troisieme phrase: si je comprends bien. C'est une phrase magique pour verifier sans paraitre perdu."),
+                ("Leo", "[short pause] Maintenant, deuxieme scene: Maya doit fixer un rendez-vous."),
+            ],
+        ),
+        Section(
+            slug="05_live_situation_two",
+            title="Live situation two",
+            speakers=SCENE_VOICES,
+            lines=[
+                ("Daniel", "[professional] Bonjour Maya. J'ai recu vos documents."),
+                ("Maya", "[friendly] Bonjour Daniel. Merci de me rappeler."),
+                ("Daniel", "[clear] On peut vous proposer un rendez-vous jeudi a quinze heures trente."),
+                ("Maya", "[thinking] Jeudi a quinze heures trente. Est-ce qu'il y a une autre option le matin?"),
+                ("Daniel", "[helpful] Oui, vendredi a neuf heures quinze."),
+                ("Maya", "[confirming] Vendredi a neuf heures quinze, c'est mieux pour moi."),
+                ("Daniel", "[clear] Tres bien. Vous devez arriver dix minutes avant."),
+                ("Maya", "[carefully] Je veux etre sure de bien comprendre: j'arrive dix minutes avant avec mes documents."),
+                ("Daniel", "[reassuringly] Oui, exactement."),
+                ("Maya", "[polite] Parfait. Est-ce que je vais recevoir une confirmation par courriel?"),
+                ("Daniel", "[friendly] Oui. Je vous envoie la confirmation maintenant."),
+                ("Maya", "[confident] Merci beaucoup. Bonne journee."),
+            ],
+        ),
+        Section(
+            slug="06_breakdown_two",
+            title="Breakdown two",
+            speakers=HOST_VOICES,
+            lines=[
+                ("Leo", "[focused] Ici, Maya utilise une bonne technique: elle repete l'heure pour verifier."),
+                ("Sophie", "[warmly] Oui. Quand quelqu'un dit une heure, repete-la. Ca evite les erreurs."),
+                ("Leo", "[clearly] Phrase utile: est-ce qu'il y a une autre option le matin?"),
+                ("Sophie", "[coach tone] Tu peux changer la fin: le soir, cette semaine, la semaine prochaine."),
+                ("Leo", "[analytical] Autre phrase tres naturelle: je veux etre sur de bien comprendre."),
+                ("Sophie", "[slowly] Repete: je veux etre sure de bien comprendre."),
+                ("Leo", "[natural speed] Je veux etre sur de bien comprendre."),
+                ("Sophie", "[encouragingly] Cette phrase montre que tu es serieux et organise."),
+            ],
+        ),
+        Section(
+            slug="07_repeat_practice",
+            title="Repeat practice",
+            speakers=HOST_VOICES,
+            lines=[
+                ("Sophie", "[teacher mode] Pratique avec nous. Repete apres moi."),
+                ("Sophie", "[slowly] Je voudrais avoir plus d'informations."),
+                ("Leo", "[short pause] Naturel: je voudrais avoir plus d'informations."),
+                ("Sophie", "[slowly] Quelles sont les prochaines etapes?"),
+                ("Leo", "[short pause] Naturel: quelles sont les prochaines etapes?"),
+                ("Sophie", "[slowly] Je veux etre sure de bien comprendre."),
+                ("Leo", "[short pause] Naturel: je veux etre sur de bien comprendre."),
+                ("Sophie", "[brightly] Maintenant, remplis le blanc: je voudrais avoir plus d'informations sur blank."),
+                ("Leo", "[thinking pause] Tu peux dire: le rendez-vous, les documents, le prix, ou les horaires."),
+                ("Sophie", "[encouragingly] Deuxieme blanc: est-ce qu'il y a une autre option blank?"),
+                ("Leo", "[clear] Tu peux dire: le matin, vendredi, ou la semaine prochaine."),
+            ],
+        ),
+        Section(
+            slug="08_recap_close",
+            title="Recap and next step",
+            speakers=HOST_VOICES,
+            lines=[
+                ("Leo", "[calmly] Resume en trois points. Un: donne le contexte."),
+                ("Sophie", "[clearly] Deux: demande une explication simple."),
+                ("Leo", "[focused] Trois: confirme avec tes propres mots."),
+                ("Sophie", f"[warmly] Pour {topic}, ces trois etapes t'aident a rester calme et clair."),
+                ("Leo", "[analytical] Garde les phrases dans ton telephone et pratique-les a voix haute."),
+                ("Sophie", "[friendly] Merci d'avoir ecoute French for Canada. A tres bientot."),
+            ],
+        ),
+    ]
+    return sections, description
+
+
 def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
 
@@ -596,6 +731,12 @@ def main() -> int:
     parser.add_argument("--background", default="video/download.mp4")
     parser.add_argument("--title", default="French for Canada: First Appointments and Daily Life")
     parser.add_argument("--static-template", action="store_true")
+    parser.add_argument(
+        "--text-fallback",
+        choices=("local", "static", "fail"),
+        default="local",
+        help="Behavior when Gemini text generation fails before TTS rendering.",
+    )
     parser.add_argument("--script-only", action="store_true")
     args = parser.parse_args()
 
@@ -616,8 +757,22 @@ def main() -> int:
     if args.static_template:
         sections = SECTIONS
         generated_description = ""
+        script_source = "static-template"
     else:
-        sections, generated_description = generate_sections_from_topic(api_key, args.title)
+        try:
+            sections, generated_description = generate_sections_from_topic(api_key, args.title)
+            script_source = "gemini-text"
+        except Exception as exc:  # noqa: BLE001
+            if args.text_fallback == "fail":
+                raise
+            print(f"WARNING: Gemini text generation failed; using {args.text_fallback} fallback. {exc}")
+            if args.text_fallback == "static":
+                sections = SECTIONS
+                generated_description = ""
+                script_source = "static-template-after-gemini-failure"
+            else:
+                sections, generated_description = local_fallback_sections(args.title)
+                script_source = "local-template-after-gemini-failure"
 
     if args.script_only:
         transcript_path = run_dir / "french_for_canada_long_transcript.txt"
@@ -646,6 +801,7 @@ def main() -> int:
             "transcript": str(transcript_path),
             "youtube_title": str(title_path),
             "youtube_description": str(description_path),
+            "script_source": script_source,
             "sections": [section.title for section in sections],
         }
         summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -711,6 +867,7 @@ def main() -> int:
         "frame": str(frame_path),
         "youtube_title": str(title_path),
         "youtube_description": str(description_path),
+        "script_source": script_source,
     }
     summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps(summary, indent=2, ensure_ascii=False))
