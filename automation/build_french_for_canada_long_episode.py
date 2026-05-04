@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import base64
 import json
 import os
@@ -28,6 +29,13 @@ HOST_VOICES = {
 SCENE_VOICES = {
     "Maya": "Laomedeia",
     "Daniel": "Charon",
+}
+
+EDGE_VOICES = {
+    "Sophie": "fr-CA-SylvieNeural",
+    "Leo": "fr-CA-ThierryNeural",
+    "Maya": "fr-FR-VivienneMultilingualNeural",
+    "Daniel": "fr-CA-AntoineNeural",
 }
 
 
@@ -522,6 +530,9 @@ Transcript:
 
 
 def render_section(section: Section, api_key: str, output_dir: Path) -> tuple[Path, str]:
+    if not api_key:
+        return render_section_with_edge_tts(section, output_dir), "edge-tts"
+
     prompt = build_section_prompt(section)
     speaker_voice_configs = [
         {
@@ -552,7 +563,86 @@ def render_section(section: Section, api_key: str, output_dir: Path) -> tuple[Pa
         except Exception as exc:  # noqa: BLE001
             last_error = exc
     assert last_error is not None
-    raise last_error
+    print(f"WARNING: Gemini TTS failed for {section.slug}; using edge-tts fallback. {last_error}")
+    return render_section_with_edge_tts(section, output_dir), "edge-tts-after-gemini-failure"
+
+
+async def synthesize_edge_mp3(text: str, voice: str, mp3_path: Path) -> None:
+    import edge_tts
+
+    communicate = edge_tts.Communicate(text=text, voice=voice, rate="+5%", pitch="+0Hz")
+    await communicate.save(str(mp3_path))
+
+
+def render_section_with_edge_tts(section: Section, output_dir: Path) -> Path:
+    line_dir = output_dir / f"{section.slug}_edge"
+    line_dir.mkdir(parents=True, exist_ok=True)
+    wav_parts: list[Path] = []
+    silence_path = line_dir / "silence.wav"
+    run_command(
+        [
+            "ffmpeg",
+            "-y",
+            "-f",
+            "lavfi",
+            "-i",
+            "anullsrc=r=24000:cl=mono",
+            "-t",
+            "0.35",
+            "-acodec",
+            "pcm_s16le",
+            str(silence_path),
+        ]
+    )
+    for index, (speaker, line) in enumerate(section.lines, start=1):
+        text = clean_for_caption(line)
+        if not text:
+            continue
+        voice = EDGE_VOICES.get(speaker, "fr-CA-SylvieNeural")
+        mp3_path = line_dir / f"{index:03d}_{slugify(speaker)}.mp3"
+        wav_path = line_dir / f"{index:03d}_{slugify(speaker)}.wav"
+        asyncio.run(synthesize_edge_mp3(text, voice, mp3_path))
+        run_command(
+            [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(mp3_path),
+                "-ar",
+                "24000",
+                "-ac",
+                "1",
+                "-acodec",
+                "pcm_s16le",
+                str(wav_path),
+            ]
+        )
+        wav_parts.append(wav_path)
+        wav_parts.append(silence_path)
+    if not wav_parts:
+        raise RuntimeError(f"No Edge TTS audio parts were generated for {section.slug}")
+    concat_path = line_dir / "section.concat.txt"
+    section_wav = output_dir / f"{section.slug}.wav"
+    concat_path.write_text(
+        "\n".join(f"file '{part.resolve().as_posix()}'" for part in wav_parts) + "\n",
+        encoding="utf-8",
+    )
+    run_command(
+        [
+            "ffmpeg",
+            "-y",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            str(concat_path),
+            "-c",
+            "copy",
+            str(section_wav),
+        ]
+    )
+    return section_wav
 
 
 def word_count(text: str) -> int:
@@ -676,7 +766,14 @@ def concat_audio(wav_paths: list[Path], concat_path: Path, wav_output: Path, mp3
     )
 
 
-def build_video(background: Path, mp3_path: Path, ass_path: Path, mp4_path: Path, frame_path: Path) -> None:
+def build_video(
+    background: Path,
+    mp3_path: Path,
+    ass_path: Path,
+    mp4_path: Path,
+    frame_path: Path,
+    preset: str = "veryfast",
+) -> None:
     subtitle_path = ass_path.resolve().as_posix().replace(":", r"\:")
     run_command(
         [
@@ -697,7 +794,7 @@ def build_video(background: Path, mp3_path: Path, ass_path: Path, mp4_path: Path
             "-c:v",
             "libx264",
             "-preset",
-            "medium",
+            preset,
             "-crf",
             "21",
             "-c:a",
@@ -731,6 +828,7 @@ def main() -> int:
     parser.add_argument("--background", default="video/download.mp4")
     parser.add_argument("--title", default="French for Canada: First Appointments and Daily Life")
     parser.add_argument("--static-template", action="store_true")
+    parser.add_argument("--video-preset", default="veryfast")
     parser.add_argument(
         "--text-fallback",
         choices=("local", "static", "fail"),
@@ -742,7 +840,7 @@ def main() -> int:
 
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
-        raise RuntimeError("GEMINI_API_KEY is not set.")
+        print("WARNING: GEMINI_API_KEY is not set; using local script and edge-tts fallback.")
 
     base_dir = Path.cwd()
     background = (base_dir / args.background).resolve()
@@ -758,6 +856,9 @@ def main() -> int:
         sections = SECTIONS
         generated_description = ""
         script_source = "static-template"
+    elif not api_key:
+        sections, generated_description = local_fallback_sections(args.title)
+        script_source = "local-template-no-gemini-key"
     else:
         try:
             sections, generated_description = generate_sections_from_topic(api_key, args.title)
@@ -836,7 +937,7 @@ def main() -> int:
     write_transcript(transcript_path, sections)
     write_srt(srt_path, segments)
     write_ass(ass_path, segments)
-    build_video(background, mp3_output, ass_path, mp4_path, frame_path)
+    build_video(background, mp3_output, ass_path, mp4_path, frame_path, preset=args.video_preset)
 
     title_path.write_text(args.title + "\n", encoding="utf-8")
     description_path.write_text(
