@@ -110,8 +110,23 @@ def get_authenticated_service(token_file=None, client_secrets_file=None):
             and getattr(credentials, "has_scopes", lambda _: False)(SCOPES)
         ):
             print("Refreshing access token...")
-            credentials.refresh(Request())
-        else:
+            try:
+                credentials.refresh(Request())
+            except Exception as exc:
+                if os.environ.get("GITHUB_ACTIONS") == "true":
+                    raise RuntimeError(
+                        "YouTube OAuth token is expired or revoked. Re-authenticate locally and update "
+                        "the GitHub secret YOUTUBE_TOKEN_PICKLE_B64."
+                    ) from exc
+                print(f"WARNING: Saved YouTube token could not be refreshed: {exc}")
+                credentials = None
+
+        if not credentials or not credentials.valid:
+            if os.environ.get("GITHUB_ACTIONS") == "true":
+                raise RuntimeError(
+                    "YouTube OAuth token is missing, invalid, or under-scoped. Re-authenticate locally and update "
+                    "the GitHub secret YOUTUBE_TOKEN_PICKLE_B64."
+                )
             if not client_secrets_file.exists():
                 print(f"ERROR: {client_secrets_file} not found!")
                 print("\nSetup Instructions:")
