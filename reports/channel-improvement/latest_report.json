@@ -1,6 +1,6 @@
 {
   "status": "auth_failed",
-  "generated_at": "2026-10-11T11:37:43.381870+00:00",
+  "generated_at": "2026-10-12T13:33:49.442903+00:00",
   "channel_title": "The French Pod Club",
   "error_type": "RuntimeError",
   "error": "YouTube OAuth token is expired or revoked. Re-authenticate locally and update the GitHub secret YOUTUBE_TOKEN_PICKLE_B64.",
