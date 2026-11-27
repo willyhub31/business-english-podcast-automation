@@ -1,6 +1,6 @@
 # Daily Channel Improvement Report
 
-Generated: `2026-11-26T15:49:57.031616+00:00`
+Generated: `2026-11-27T15:38:34.082385+00:00`
 
 ## Status
 - YouTube authentication failed before channel stats could be loaded.
